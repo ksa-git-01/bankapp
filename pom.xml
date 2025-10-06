@@ -9,11 +9,14 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 
-	<groupId>ru.yanddex.practicum</groupId>
+	<groupId>ru.yandex.practicum</groupId>
 	<artifactId>bankapp</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<description>Учебный проект &quot;Банк&quot;</description>
+	<modules>
+		<module>frontui</module>
+	</modules>
 
 	<properties>
 		<maven.compiler.source>21</maven.compiler.source>
