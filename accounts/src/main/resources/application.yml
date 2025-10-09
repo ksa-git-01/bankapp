@@ -33,3 +33,14 @@ management:
 
 server:
   port: 8082
+
+rsa:
+  private-key: classpath:certs/private.pem
+  public-key: classpath:certs/public.pem
+
+jwt:
+  expiration: 3600000
+
+logging:
+  level:
+    org.springframework.security: DEBUG
