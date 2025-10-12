@@ -20,5 +20,11 @@ management:
     health:
       show-details: always
 
+gateway:
+  url: http://gateway
+
+rsa:
+  public-key: classpath:certs/public.pem
+
 server:
   port: 8081
