@@ -15,6 +15,15 @@ spring:
         locator:
           enabled: true
           lower-case-service-id: true
+      server:
+        webflux:
+          routes:
+            - id: accounts-service
+              uri: lb://accounts
+              predicates:
+                - Path=/accounts/**
+              filters:
+                - StripPrefix=1
 
 management:
   endpoints:
