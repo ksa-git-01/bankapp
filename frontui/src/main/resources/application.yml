@@ -10,6 +10,18 @@ spring:
       discovery:
         enabled: true
         service-name: ${spring.application.name}
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            client-id: frontui-client
+            client-secret: ${FRONTUI_CLIENT_SECRET}
+            authorization-grant-type: client_credentials
+            scope: openid
+        provider:
+          keycloak:
+            token-uri: http://bankapp-keycloak:8080/realms/bankapp/protocol/openid-connect/token
 
 management:
   endpoints:
@@ -20,8 +32,9 @@ management:
     health:
       show-details: always
 
-gateway:
-  url: http://gateway
+accounts:
+  service:
+    url: http://gateway/accounts
 
 rsa:
   public-key: classpath:certs/public.pem
