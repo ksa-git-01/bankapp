@@ -1,0 +1,7 @@
+ALTER TABLE users
+ADD COLUMN IF NOT EXISTS name VARCHAR(100),
+ADD COLUMN IF NOT EXISTS email VARCHAR(100),
+ADD COLUMN IF NOT EXISTS birthdate DATE;
+
+UPDATE users SET name = username WHERE name IS NULL;
+UPDATE users SET birthdate = '2000-01-01' WHERE birthdate IS NULL;
