@@ -1,6 +1,7 @@
 package ru.yandex.practicum.accounts.configuration;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,6 +20,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 @EnableConfigurationProperties(RsaKeyProperties.class)
 @RequiredArgsConstructor
+@Slf4j
 public class SecurityConfig {
 
     private final UserJwtAuthenticationFilter userJwtAuthenticationFilter;
@@ -30,6 +32,8 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        log.info("Configuring Security: OAuth2 Resource Server with JWT");
+
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session ->
@@ -46,6 +50,8 @@ public class SecurityConfig {
                 )
                 .addFilterAfter(userJwtAuthenticationFilter,
                         BearerTokenAuthenticationFilter.class);
+
+        log.info("Security configured: issuer-uri = http://keycloak:8080/realms/bankapp");
 
         return http.build();
     }
