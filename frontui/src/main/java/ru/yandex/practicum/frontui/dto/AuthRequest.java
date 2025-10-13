@@ -1,15 +1,9 @@
 package ru.yandex.practicum.frontui.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
+@Data
 public class AuthRequest {
-    private String username;
-    private String password;
+    private final String username;
+    private final String password;
 }

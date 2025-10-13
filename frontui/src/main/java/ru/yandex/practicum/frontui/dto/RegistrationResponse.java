@@ -3,10 +3,8 @@ package ru.yandex.practicum.frontui.dto;
 import lombok.*;
 
 @Data
-public class AuthResponse {
-    private final String token;
-    private final String type;
+public class RegistrationResponse {
     private final Long userId;
     private final String username;
-    private final String role;
+    private final String message;
 }
