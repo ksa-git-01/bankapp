@@ -21,7 +21,11 @@ spring:
     locations: classpath:db/migration
     baseline-version: 0
     validate-on-migrate: true
-
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://bankapp-keycloak:8080/realms/bankapp
 management:
   endpoints:
     web:
