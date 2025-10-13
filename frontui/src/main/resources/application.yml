@@ -41,3 +41,10 @@ rsa:
 
 server:
   port: 8081
+
+logging:
+  level:
+    root: INFO
+    ru.yandex.practicum.frontui: INFO
+    ru.yandex.practicum.frontui.configuration.security: INFO
+    org.springframework.security.oauth2.client: DEBUG
