@@ -18,6 +18,42 @@ services:
     networks:
       - bank-network
 
+  bankapp-keycloak-postgres:
+    image: postgres:16.9
+    container_name: bankapp-keycloak-postgres
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: ${KEYCLOAK_DB_USER:-keycloak_user}
+      POSTGRES_PASSWORD: ${KEYCLOAK_DB_PASSWORD:-keycloak_password}
+    ports:
+      - "${KEYCLOAK_POSTGRES_PORT:-15433}:5432"
+    volumes:
+      - bankapp_keycloak_postgres_data:/var/lib/postgresql/data
+    networks:
+      - bank-network
+
+  bankapp-keycloak:
+    image: quay.io/keycloak/keycloak:25.0.6
+    container_name: bankapp-keycloak
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://bankapp-keycloak-postgres:5432/keycloak
+      KC_DB_USERNAME: ${KEYCLOAK_DB_USER:-keycloak_user}
+      KC_DB_PASSWORD: ${KEYCLOAK_DB_PASSWORD:-keycloak_password}
+      FRONTUI_CLIENT_SECRET: ${FRONTUI_CLIENT_SECRET:-FRONTUI-client-secret-123456}
+      ACCOUNTS_CLIENT_SECRET: ${ACCOUNTS_CLIENT_SECRET:-ACCOUNTS-client-secret-123456}
+    ports:
+      - "${KEYCLOAK_PORT:-18080}:8080"
+    depends_on:
+      - bankapp-keycloak-postgres
+    volumes:
+      - ./keycloak/realm-import:/opt/keycloak/data/import
+    networks:
+      - bank-network
+    command: start-dev --import-realm
+
   consul:
     image: hashicorp/consul:1.21
     container_name: consul
@@ -66,6 +102,7 @@ services:
       - SPRING_DATASOURCE_NAME=${POSTGRES_DB:-accounts}
       - SPRING_DATASOURCE_USER=${POSTGRES_USER:-accounts_user}
       - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD:-password}
+      - ACCOUNTS_CLIENT_SECRET=${ACCOUNTS_CLIENT_SECRET:-ACCOUNTS-client-secret-123456}
     depends_on:
       consul:
         condition: service_healthy
@@ -84,6 +121,7 @@ services:
     environment:
       - SPRING_CLOUD_CONSUL_HOST=consul
       - SPRING_CLOUD_CONSUL_PORT=8500
+      - FRONTUI_CLIENT_SECRET=${FRONTUI_CLIENT_SECRET:-FRONTUI-client-secret-123456}
     depends_on:
       consul:
         condition: service_healthy
@@ -92,6 +130,7 @@ services:
 
 volumes:
   accounts_postgres_data:
+  bankapp_keycloak_postgres_data:
 
 networks:
   bank-network:
