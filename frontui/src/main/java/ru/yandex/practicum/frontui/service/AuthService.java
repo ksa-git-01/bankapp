@@ -13,13 +13,13 @@ public class AuthService {
 
     private final RestTemplate restTemplate;
 
-    @Value("${gateway.url}")
-    private String gatewayUrl;
+    @Value("${accounts.service.url}")
+    private String accountsUrl;
 
     public AuthResponse authenticate(String username, String password) {
         AuthRequest request = new AuthRequest(username, password);
 
-        String url = gatewayUrl + "/accounts/api/auth";
+        String url = accountsUrl + "/api/auth";
 
         return restTemplate.postForObject(url, request, AuthResponse.class);
     }
