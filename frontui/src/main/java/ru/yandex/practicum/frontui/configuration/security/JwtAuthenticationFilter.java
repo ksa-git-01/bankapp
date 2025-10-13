@@ -17,6 +17,8 @@ import ru.yandex.practicum.frontui.service.JwtService;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
@@ -28,7 +30,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
-
         return path.startsWith("/actuator/") ||
                 path.equals("/login") ||
                 path.equals("/error");
@@ -44,7 +45,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         log.info("Request URI: {}", request.getRequestURI());
 
         String jwt = getJwtFromCookie(request);
-        log.info("JWT from cookie: {}", jwt != null ? "exists" : "null");
+        log.info("JWT from cookie: {}", jwt != null ? "present" : "null");
 
         if (jwt != null && !jwt.isEmpty()) {
             boolean valid = jwtService.validateToken(jwt);
@@ -53,14 +54,25 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if (valid) {
                 Claims claims = jwtService.getClaims(jwt);
                 String username = claims.getSubject();
+                String role = claims.get("role", String.class);
+                Long userId = claims.get("userId", Long.class);
+
                 log.info("Username from JWT: {}", username);
 
                 UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(
                                 username,
                                 jwt,
-                                Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + claims.get("role", String.class)))
+                                Collections.singletonList(
+                                        new SimpleGrantedAuthority("ROLE_" + role)
+                                )
                         );
+                
+                Map<String, Object> details = new HashMap<>();
+                details.put("jwt", jwt);
+                details.put("userId", userId);
+                details.put("role", role);
+                authentication.setDetails(details);
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
                 log.info("Authentication set in SecurityContext");
@@ -74,8 +86,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (request.getCookies() != null) {
             for (Cookie cookie : request.getCookies()) {
                 if ("JWT-TOKEN".equals(cookie.getName())) {
-                    String jwt = cookie.getValue();
-                    return jwt;
+                    return cookie.getValue();
                 }
             }
         }
