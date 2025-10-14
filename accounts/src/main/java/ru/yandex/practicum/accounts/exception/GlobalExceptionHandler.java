@@ -2,6 +2,7 @@ package ru.yandex.practicum.accounts.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -53,5 +54,12 @@ public class GlobalExceptionHandler {
         errorResponse.put("errors", e.getErrors());
         errorResponse.put("message", "Ошибка валидации");
         return ResponseEntity.badRequest().body(errorResponse);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<Map<String, String>> handleAccessDeniedException(AccessDeniedException e) {
+        Map<String, String> errorResponse = new HashMap<>();
+        errorResponse.put("message", e.getMessage());
+        return ResponseEntity.status(403).body(errorResponse);
     }
 }
