@@ -1,4 +1,4 @@
-package ru.yandex.practicum.frontui.configuration.security;
+package ru.yandex.practicum.frontui.configuration;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,23 +31,19 @@ public class RemoteAuthenticationProvider implements AuthenticationProvider {
         String username = authentication.getName();
         String password = authentication.getCredentials().toString();
 
-        log.info("=== REMOTE AUTH PROVIDER ===");
-        log.info("Username: {}", username);
-
         AuthRequest request = new AuthRequest(username, password);
-        String url = "http://gateway/accounts/api/auth";
+        log.debug("AuthRequest: {}", request);
+        String url = "/accounts/api/auth";
 
         AuthResponse response;
         try {
             response = restTemplate.postForObject(url, request, AuthResponse.class);
-            log.info("Response from accounts: {}", response);
-            log.info("JWT token: {}", response.getToken());
+            log.debug("AuthResponse: {}", response);
         } catch (Exception e) {
-            log.info("Error calling accounts: {}", e.getMessage());
             throw new BadCredentialsException("Authentication failed: " + e.getMessage());
         }
 
-        if (response.getToken() == null) {
+        if (response.token() == null) {
             throw new BadCredentialsException("Invalid credentials");
         }
 
@@ -55,16 +51,14 @@ public class RemoteAuthenticationProvider implements AuthenticationProvider {
                 new UsernamePasswordAuthenticationToken(
                         username,
                         null,
-                        Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + response.getRole()))
+                        Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + response.role()))
                 );
 
         Map<String, Object> details = new HashMap<>();
-        details.put("jwt", response.getToken());
-        details.put("userId", response.getUserId());
-        details.put("role", response.getRole());
+        details.put("jwt", response.token());
+        details.put("userId", response.userId());
+        details.put("role", response.role());
         auth.setDetails(details);
-
-        log.info("Authentication created with JWT in details");
 
         return auth;
     }

@@ -1,9 +1,8 @@
-package ru.yandex.practicum.frontui.configuration.security;
+package ru.yandex.practicum.frontui.configuration;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -12,7 +11,6 @@ import java.io.IOException;
 import java.util.Map;
 
 @Component
-@Slf4j
 public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
     @Override
@@ -21,16 +19,12 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
                                         Authentication authentication)
             throws IOException {
 
-        log.info("=== SUCCESS HANDLER ===");
-
         String jwt = null;
         if (authentication.getDetails() instanceof Map) {
             @SuppressWarnings("unchecked")
             Map<String, Object> details = (Map<String, Object>) authentication.getDetails();
             jwt = (String) details.get("jwt");
         }
-
-        log.info("JWT from details: {}", jwt);
 
         if (jwt == null) {
             throw new IllegalStateException("JWT not found in authentication details");
@@ -43,7 +37,6 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 
         response.addCookie(cookie);
 
-        log.info("Cookie added, redirecting to /");
         response.sendRedirect("/");
     }
 }

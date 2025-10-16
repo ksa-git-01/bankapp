@@ -1,4 +1,4 @@
-package ru.yandex.practicum.frontui.configuration.security;
+package ru.yandex.practicum.frontui.configuration;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -30,8 +30,7 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/error", "/signup").permitAll()
-                        .requestMatchers("/actuator/**").permitAll()
+                        .requestMatchers("/login", "/error", "/signup", "/actuator/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form

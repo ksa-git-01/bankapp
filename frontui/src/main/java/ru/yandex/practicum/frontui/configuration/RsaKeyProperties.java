@@ -1,4 +1,4 @@
-package ru.yandex.practicum.frontui.configuration.security;
+package ru.yandex.practicum.frontui.configuration;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

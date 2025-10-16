@@ -1,6 +1,7 @@
-package ru.yandex.practicum.frontui.configuration.security;
+package ru.yandex.practicum.frontui.configuration;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -13,7 +14,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import ru.yandex.practicum.frontui.service.JwtService;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -25,14 +25,17 @@ import java.util.Map;
 @Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final JwtService jwtService;
+    private final RsaKeyProperties keyProperties;
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
-        return path.startsWith("/actuator/") ||
+
+        return path.startsWith("/actuator") ||
                 path.equals("/login") ||
-                path.equals("/error");
+                path.equals("/error") ||
+                path.equals("/signup")
+                ;
     }
 
     @Override
@@ -41,44 +44,36 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
-        log.info("=== JWT FILTER ===");
-        log.info("Request URI: {}", request.getRequestURI());
+        log.debug("=== JWT FILTER ===");
+        log.debug("Request URI: {}", request.getRequestURI());
 
         String jwt = getJwtFromCookie(request);
-        log.info("JWT from cookie: {}", jwt != null ? "present" : "null");
+        log.debug("JWT from cookie: {}", jwt != null ? "exists" : "null");
 
         if (jwt != null && !jwt.isEmpty()) {
-            boolean valid = jwtService.validateToken(jwt);
-            log.info("JWT valid: {}", valid);
+            Claims claims = Jwts.parser()
+                    .verifyWith(keyProperties.publicKey())
+                    .build()
+                    .parseSignedClaims(jwt)
+                    .getBody();
+            String username = claims.getSubject();
+            log.debug("Username from JWT: {}", username);
 
-            if (valid) {
-                Claims claims = jwtService.getClaims(jwt);
-                String username = claims.getSubject();
-                String role = claims.get("role", String.class);
-                Long userId = claims.get("userId", Long.class);
+            UsernamePasswordAuthenticationToken auth =
+                    new UsernamePasswordAuthenticationToken(
+                            username,
+                            null,
+                            Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + claims.get("role", String.class)))
+                    );
 
-                log.info("Username from JWT: {}", username);
+            Map<String, Object> details = new HashMap<>();
+            details.put("jwt", jwt);
+            details.put("userId", claims.get("userId", Long.class));
+            auth.setDetails(details);
 
-                UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(
-                                username,
-                                jwt,
-                                Collections.singletonList(
-                                        new SimpleGrantedAuthority("ROLE_" + role)
-                                )
-                        );
-                
-                Map<String, Object> details = new HashMap<>();
-                details.put("jwt", jwt);
-                details.put("userId", userId);
-                details.put("role", role);
-                authentication.setDetails(details);
-
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-                log.info("Authentication set in SecurityContext");
-            }
+            SecurityContextHolder.getContext().setAuthentication(auth);
+            log.debug("Authentication set in SecurityContext");
         }
-
         filterChain.doFilter(request, response);
     }
 
@@ -86,7 +81,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (request.getCookies() != null) {
             for (Cookie cookie : request.getCookies()) {
                 if ("JWT-TOKEN".equals(cookie.getName())) {
-                    return cookie.getValue();
+                    String jwt = cookie.getValue();
+                    return jwt;
                 }
             }
         }

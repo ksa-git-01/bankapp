@@ -1,24 +1,26 @@
-package ru.yandex.practicum.frontui.configuration.security;
+package ru.yandex.practicum.frontui.configuration;
 
-import lombok.extern.slf4j.Slf4j;  // ДОБАВИТЬ
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.*;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.web.client.RestTemplate;
 
 @Configuration
-@Slf4j  // ДОБАВИТЬ
+@Slf4j
 public class OAuth2RestTemplateConfig {
 
-    @Value("${accounts.service.url}")
-    private String accountsServiceUrl;
+    @Value("${gateway.url}")
+    private String gatewayUrl;
 
     @Bean
     @LoadBalanced
@@ -26,7 +28,7 @@ public class OAuth2RestTemplateConfig {
             OAuth2AuthorizedClientManager authorizedClientManager) {
 
         RestTemplate restTemplate = new RestTemplateBuilder()
-                .rootUri(accountsServiceUrl)
+                .rootUri(gatewayUrl)
                 .build();
 
         restTemplate.getInterceptors().add(
@@ -40,10 +42,6 @@ public class OAuth2RestTemplateConfig {
             OAuth2AuthorizedClientManager authorizedClientManager) {
 
         return (request, body, execution) -> {
-            // ДОБАВИТЬ логи
-            log.info("┌─────────────────────────────────────────────────");
-            log.info("│ [FRONTUI → KEYCLOAK] Requesting OAuth2 token...");
-
             OAuth2AuthorizeRequest authorizeRequest = OAuth2AuthorizeRequest
                     .withClientRegistrationId("keycloak")
                     .principal(createServiceAccountPrincipal())
@@ -54,22 +52,10 @@ public class OAuth2RestTemplateConfig {
 
             if (authorizedClient != null) {
                 String token = authorizedClient.getAccessToken().getTokenValue();
-                String tokenPreview = token.substring(0, Math.min(50, token.length())) + "...";
-
-                // ДОБАВИТЬ логи
-                log.info("│ [KEYCLOAK → FRONTUI] ✓ OAuth2 token received");
-                log.info("│   Token preview: {}", tokenPreview);
-                log.info("│   Expires at: {}", authorizedClient.getAccessToken().getExpiresAt());
 
                 request.getHeaders().setBearerAuth(token);
-
-                // ДОБАВИТЬ логи
-                log.info("│ [FRONTUI → ACCOUNTS] Sending request");
-                log.info("│   Method: {} {}", request.getMethod(), request.getURI());
-                log.info("│   With OAuth2 Bearer token");
             } else {
-                // ДОБАВИТЬ логи
-                log.error("│ [KEYCLOAK → FRONTUI] ✗ Failed to obtain OAuth2 token!");
+                log.error("Failed to obtain OAuth2 token!");
             }
 
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -78,28 +64,14 @@ public class OAuth2RestTemplateConfig {
                 String userJwt = extractUserJwt(authentication);
 
                 if (userJwt != null) {
-                    String jwtPreview = userJwt.substring(0, Math.min(50, userJwt.length())) + "...";
-                    // ДОБАВИТЬ логи
-                    log.info("│   With User JWT: {}", jwtPreview);
                     request.getHeaders().set("X-User-JWT", userJwt);
                 }
             }
-
-            var response = execution.execute(request, body);
-
-            // ДОБАВИТЬ логи
-            log.info("│ [ACCOUNTS → FRONTUI] Response: {}", response.getStatusCode());
-            log.info("└─────────────────────────────────────────────────");
-
-            return response;
+            return execution.execute(request, body);
         };
     }
 
     private String extractUserJwt(Authentication authentication) {
-        if (authentication.getCredentials() instanceof String) {
-            return (String) authentication.getCredentials();
-        }
-
         if (authentication.getDetails() instanceof java.util.Map) {
             @SuppressWarnings("unchecked")
             java.util.Map<String, Object> details =
@@ -131,11 +103,11 @@ public class OAuth2RestTemplateConfig {
         return authorizedClientManager;
     }
 
-    private org.springframework.security.core.Authentication createServiceAccountPrincipal() {
-        return new org.springframework.security.authentication.AnonymousAuthenticationToken(
+    private Authentication createServiceAccountPrincipal() {
+        return new AnonymousAuthenticationToken(
                 "key",
                 "anonymousUser",
-                org.springframework.security.core.authority.AuthorityUtils.createAuthorityList("ROLE_ANONYMOUS")
+                AuthorityUtils.createAuthorityList("ROLE_ANONYMOUS")
         );
     }
 }
