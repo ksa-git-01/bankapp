@@ -32,9 +32,8 @@ management:
     health:
       show-details: always
 
-accounts:
-  service:
-    url: http://gateway/accounts
+gateway:
+  url: http://gateway
 
 rsa:
   public-key: classpath:certs/public.pem
