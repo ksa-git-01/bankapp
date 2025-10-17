@@ -24,6 +24,30 @@ spring:
                 - Path=/accounts/**
               filters:
                 - StripPrefix=1
+            - id: cash-service
+              uri: lb://cash
+              predicates:
+                - Path=/cash/**
+              filters:
+                - StripPrefix=1
+            - id: blocker-service
+              uri: lb://blocker
+              predicates:
+                - Path=/blocker/**
+              filters:
+                - StripPrefix=1
+            - id: notifications-service
+              uri: lb://notifications
+              predicates:
+                - Path=/notifications/**
+              filters:
+                - StripPrefix=1
+            - id: transfer-service
+              uri: lb://transfer
+              predicates:
+                - Path=/transfer/**
+              filters:
+                - StripPrefix=1
 
 management:
   endpoints:
@@ -36,3 +60,8 @@ management:
 
 server:
   port: 8080
+
+logging:
+  level:
+    root: INFO
+    org.springframework.cloud.gateway: DEBUG
