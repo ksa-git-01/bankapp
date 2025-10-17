@@ -1,29 +1,22 @@
 package ru.yandex.practicum.accounts.service;
 
-import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.accounts.configuration.RsaKeyProperties;
 import ru.yandex.practicum.accounts.model.User;
 
-import java.security.interfaces.RSAPrivateKey;
-import java.security.interfaces.RSAPublicKey;
 import java.util.Date;
 
 @Service
+@RequiredArgsConstructor
 public class JwtService {
 
-    private final RSAPrivateKey privateKey;
-    private final RSAPublicKey publicKey;
+    private final RsaKeyProperties keyProperties;
 
     @Value("${jwt.expiration}")
     private long expiration;
-
-    public JwtService(RsaKeyProperties keyProperties) {
-        this.privateKey = keyProperties.privateKey();
-        this.publicKey = keyProperties.publicKey();
-    }
 
     public String generateToken(User user) {
         Date now = new Date();
@@ -35,19 +28,7 @@ public class JwtService {
                 .claim("role", user.getRole())
                 .issuedAt(now)
                 .expiration(expiryDate)
-                .signWith(privateKey, Jwts.SIG.RS256)
+                .signWith(keyProperties.privateKey(), Jwts.SIG.RS256)
                 .compact();
-    }
-
-    public boolean validateToken(String token) {
-        try {
-            Jwts.parser()
-                    .verifyWith(publicKey)
-                    .build()
-                    .parseSignedClaims(token);
-            return true;
-        } catch (JwtException | IllegalArgumentException e) {
-            return false;
-        }
     }
 }
