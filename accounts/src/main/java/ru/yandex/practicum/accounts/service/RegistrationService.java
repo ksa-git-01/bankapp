@@ -27,20 +27,17 @@ public class RegistrationService {
 
     @Transactional
     public RegistrationResponse registerUser(RegistrationRequest request) {
-        log.info("Registering new user: {}", request.getLogin());
+        log.debug("Registering new user: {}", request.getLogin());
 
-        // Валидация
         List<String> errors = validateRegistration(request);
         if (!errors.isEmpty()) {
             throw new ValidationException(errors);
         }
 
-        // Проверка существования пользователя
         if (userRepository.findByUsername(request.getLogin()).isPresent()) {
             throw new ValidationException(List.of("Пользователь с таким логином уже существует"));
         }
 
-        // Создание пользователя
         User user = new User();
         user.setUsername(request.getLogin());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
@@ -53,7 +50,7 @@ public class RegistrationService {
 
         User savedUser = userRepository.save(user);
 
-        log.info("User registered successfully: {}", savedUser.getUsername());
+        log.debug("User registered successfully: {}", savedUser.getUsername());
 
         return new RegistrationResponse(
                 savedUser.getId(),
@@ -65,7 +62,6 @@ public class RegistrationService {
     private List<String> validateRegistration(RegistrationRequest request) {
         List<String> errors = new ArrayList<>();
 
-        // Проверка заполнения полей
         if (request.getLogin() == null || request.getLogin().trim().isEmpty()) {
             errors.add("Логин обязателен для заполнения");
         }
@@ -86,14 +82,12 @@ public class RegistrationService {
             errors.add("Дата рождения обязательна для заполнения");
         }
 
-        // Проверка совпадения паролей
         if (request.getPassword() != null && request.getConfirmPassword() != null) {
             if (!request.getPassword().equals(request.getConfirmPassword())) {
                 errors.add("Пароли не совпадают");
             }
         }
 
-        // Проверка возраста (старше 18 лет)
         if (request.getBirthdate() != null) {
             int age = Period.between(request.getBirthdate(), LocalDate.now()).getYears();
             if (age < 18) {
@@ -101,17 +95,6 @@ public class RegistrationService {
             }
         }
 
-        // Проверка длины логина
-        if (request.getLogin() != null && request.getLogin().length() < 3) {
-            errors.add("Логин должен содержать минимум 3 символа");
-        }
-
-        // Проверка длины пароля
-        if (request.getPassword() != null && request.getPassword().length() < 4) {
-            errors.add("Пароль должен содержать минимум 4 символа");
-        }
-
-        // Проверка email (если указан)
         if (request.getEmail() != null && !request.getEmail().isEmpty()) {
             if (!request.getEmail().matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
                 errors.add("Некорректный формат email");
