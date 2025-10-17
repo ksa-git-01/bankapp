@@ -1,0 +1,51 @@
+spring:
+  application:
+    name: cash
+  config:
+    import: "optional:consul:"
+  cloud:
+    consul:
+      host: ${SPRING_CLOUD_CONSUL_HOST:localhost}
+      port: ${SPRING_CLOUD_CONSUL_PORT:8500}
+      discovery:
+        enabled: true
+        service-name: ${spring.application.name}
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://bankapp-keycloak:8080/realms/bankapp
+      client:
+        registration:
+          keycloak:
+            client-id: cash-client
+            client-secret: CASH-client-secret-123456
+            authorization-grant-type: client_credentials
+            scope: accounts-access,blocker-access,notifications-access
+        provider:
+          keycloak:
+            token-uri: http://bankapp-keycloak:8080/realms/bankapp/protocol/openid-connect/token
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always
+
+rsa:
+  public-key: classpath:certs/public.pem
+
+gateway:
+  url: http://gateway
+
+server:
+  port: 8083
+
+logging:
+  level:
+    root: INFO
+    ru.yandex.practicum.cash: INFO
+    org.springframework.security: DEBUG
