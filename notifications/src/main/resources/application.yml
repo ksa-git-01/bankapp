@@ -1,0 +1,38 @@
+spring:
+  application:
+    name: notifications
+  config:
+    import: "optional:consul:"
+  cloud:
+    consul:
+      host: ${SPRING_CLOUD_CONSUL_HOST:localhost}
+      port: ${SPRING_CLOUD_CONSUL_PORT:8500}
+      discovery:
+        enabled: true
+        service-name: ${spring.application.name}
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://bankapp-keycloak:8080/realms/bankapp
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always
+
+rsa:
+  public-key: classpath:certs/public.pem
+
+server:
+  port: 8085
+
+logging:
+  level:
+    root: INFO
+    ru.yandex.practicum.notifications: INFO
+    org.springframework.security: DEBUG
