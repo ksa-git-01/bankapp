@@ -1,5 +1,7 @@
 package ru.yandex.practicum.frontui.controller;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -10,16 +12,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import ru.yandex.practicum.frontui.dto.AuthRequest;
 import ru.yandex.practicum.frontui.dto.AuthResponse;
 import ru.yandex.practicum.frontui.dto.RegistrationRequest;
-import ru.yandex.practicum.frontui.dto.RegistrationResponse;
 import ru.yandex.practicum.frontui.exception.RegistrationException;
 import ru.yandex.practicum.frontui.service.AccountsClient;
 import ru.yandex.practicum.frontui.service.AuthService;
 
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletResponse;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.HashMap;
@@ -49,21 +47,17 @@ public class RegistrationController {
             @RequestParam LocalDate birthdate,
             HttpServletResponse response,
             Model model) {
-
-        log.info("Registration form submitted for user: {}", login);
-
-        RegistrationRequest request = new RegistrationRequest(
-                login,
-                password,
-                confirmPassword,
-                name,
-                email,
-                birthdate
-        );
-
         try {
-            RegistrationResponse regResponse = accountsClient.registerUser(request);
-            log.info("Registration successful: {}", regResponse.getUsername());
+            RegistrationRequest request = new RegistrationRequest(
+                    login,
+                    password,
+                    confirmPassword,
+                    name,
+                    email,
+                    birthdate
+            );
+
+            accountsClient.registerUser(request);
 
             try {
                 AuthResponse authResponse = authService.authenticate(login, password);
@@ -73,29 +67,25 @@ public class RegistrationController {
                                 login,
                                 null,
                                 Collections.singletonList(
-                                        new SimpleGrantedAuthority("ROLE_" + authResponse.getRole())
+                                        new SimpleGrantedAuthority("ROLE_" + authResponse.role())
                                 )
                         );
 
                 Map<String, Object> details = new HashMap<>();
-                details.put("jwt", authResponse.getToken());
-                details.put("userId", authResponse.getUserId());
-                details.put("role", authResponse.getRole());
+                details.put("jwt", authResponse.token());
+                details.put("userId", authResponse.userId());
                 authentication.setDetails(details);
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
 
-                Cookie cookie = new Cookie("JWT-TOKEN", authResponse.getToken());
+                Cookie cookie = new Cookie("JWT-TOKEN", authResponse.token());
                 cookie.setHttpOnly(true);
                 cookie.setPath("/");
                 cookie.setMaxAge(3600);
                 response.addCookie(cookie);
-
-                log.info("User auto-logged in after registration: {}", login);
-
             } catch (Exception e) {
                 log.warn("Auto-login failed: {}", e.getMessage());
-                return "redirect:/login?registered";
+                return "redirect:/login";
             }
 
             return "redirect:/";
