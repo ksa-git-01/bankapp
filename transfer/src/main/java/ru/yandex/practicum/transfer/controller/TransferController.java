@@ -28,17 +28,17 @@ public class TransferController {
 
         Long authenticatedUserId = (Long) httpRequest.getAttribute("userId");
 
-        if (authenticatedUserId == null || !request.getFromUserId().equals(authenticatedUserId)) {
+        if (authenticatedUserId == null || !request.fromUserId().equals(authenticatedUserId)) {
             log.warn("Access denied: user {} tried to transfer from userId {}",
-                    authenticatedUserId, request.getFromUserId());
+                    authenticatedUserId, request.fromUserId());
             return ResponseEntity.status(403).body(
                     new TransferResponse(false, "Access denied", null, null)
             );
         }
 
         log.debug("Transfer request: from={}, to={}, amount={} {}",
-                request.getFromUserId(), request.getToUserId(),
-                request.getAmount(), request.getFromCurrency());
+                request.fromUserId(), request.toUserId(),
+                request.amount(), request.fromCurrency());
 
         TransferResponse response = transferService.transfer(request);
 
