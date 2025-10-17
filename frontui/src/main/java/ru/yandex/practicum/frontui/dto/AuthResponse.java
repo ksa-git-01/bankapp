@@ -1,12 +1,4 @@
 package ru.yandex.practicum.frontui.dto;
 
-import lombok.*;
-
-@Data
-public class AuthResponse {
-    private final String token;
-    private final String type;
-    private final Long userId;
-    private final String username;
-    private final String role;
+public record AuthResponse(String token, String type, Long userId, String username, String role) {
 }
