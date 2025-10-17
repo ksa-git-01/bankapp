@@ -1,12 +1,6 @@
 package ru.yandex.practicum.frontui.dto;
 
-import lombok.Data;
-
 import java.time.LocalDate;
 
-@Data
-public class UpdateUserInfoRequest {
-    private final String name;
-    private final String email;
-    private final LocalDate birthdate;
+public record UpdateUserInfoRequest(String name, String email, LocalDate birthdate) {
 }
