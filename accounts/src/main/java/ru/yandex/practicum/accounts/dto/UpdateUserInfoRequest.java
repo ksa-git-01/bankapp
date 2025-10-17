@@ -1,12 +1,19 @@
 package ru.yandex.practicum.accounts.dto;
 
-import lombok.Data;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDate;
 
-@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 public class UpdateUserInfoRequest {
-    private final String name;
-    private final String email;
-    private final LocalDate birthdate;
+    private String name;
+    private String email;
+    private LocalDate birthdate;
 }

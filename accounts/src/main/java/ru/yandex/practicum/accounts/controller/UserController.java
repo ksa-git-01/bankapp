@@ -9,9 +9,11 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.accounts.dto.UpdatePasswordRequest;
 import ru.yandex.practicum.accounts.dto.UpdateUserInfoRequest;
 import ru.yandex.practicum.accounts.dto.UserInfoResponse;
+import ru.yandex.practicum.accounts.dto.UserListResponse;
 import ru.yandex.practicum.accounts.service.UserService;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -22,8 +24,8 @@ public class UserController {
 
     private final UserService userService;
 
-    @GetMapping("/{userId}")
-    public ResponseEntity<UserInfoResponse> getUserInfo(
+    @GetMapping("/id/{userId}")
+    public ResponseEntity<UserInfoResponse> getUserInfoByUserId(
             @PathVariable Long userId,
             HttpServletRequest request) {
 
@@ -33,7 +35,14 @@ public class UserController {
             throw new AccessDeniedException("Access denied");
         }
 
-        UserInfoResponse response = userService.getUserInfo(userId);
+        UserInfoResponse response = userService.getUserInfoByUserId(userId);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/username/{username}")
+    public ResponseEntity<UserInfoResponse> getUserInfoByUsername(
+            @PathVariable String username) {
+        UserInfoResponse response = userService.getUserInfoByUsername(username);
         return ResponseEntity.ok(response);
     }
 
@@ -43,7 +52,7 @@ public class UserController {
             @RequestBody UpdatePasswordRequest request,
             HttpServletRequest httpRequest) {
 
-        log.info("Password update request for user: {}", userId);
+        log.debug("Password update request for user: {}", userId);
 
         Long authenticatedUserId = (Long) httpRequest.getAttribute("userId");
 
@@ -64,7 +73,7 @@ public class UserController {
             @RequestBody UpdateUserInfoRequest request,
             HttpServletRequest httpRequest) {
 
-        log.info("User info update request for user: {}", userId);
+        log.debug("User info update request for user: {}", userId);
 
         Long authenticatedUserId = (Long) httpRequest.getAttribute("userId");
 
@@ -76,25 +85,11 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-    @DeleteMapping("/{userId}")
-    public ResponseEntity<Map<String, String>> deleteUser(
-            @PathVariable Long userId,
-            HttpServletRequest httpRequest) {
+    @GetMapping
+    public ResponseEntity<List<UserListResponse>> getAllUsers() {
+        log.debug("Getting all users list");
 
-        log.info("User delete request for user: {}", userId);
-
-        Long authenticatedUserId = (Long) httpRequest.getAttribute("userId");
-
-        if (!userId.equals(authenticatedUserId)) {
-            throw new AccessDeniedException("Access denied");
-        }
-
-        userService.deleteUser(userId);
-
-        Map<String, String> response = new HashMap<>();
-        response.put("message", "Пользователь удален");
-        return ResponseEntity.ok(response);
+        List<UserListResponse> users = userService.getAllUsers();
+        return ResponseEntity.ok(users);
     }
-
-
 }

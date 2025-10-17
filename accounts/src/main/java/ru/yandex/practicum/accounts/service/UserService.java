@@ -5,17 +5,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.yandex.practicum.accounts.dto.UpdatePasswordRequest;
-import ru.yandex.practicum.accounts.dto.UpdateUserInfoRequest;
-import ru.yandex.practicum.accounts.dto.UserInfoResponse;
+import ru.yandex.practicum.accounts.dto.*;
 import ru.yandex.practicum.accounts.exception.ValidationException;
 import ru.yandex.practicum.accounts.model.User;
 import ru.yandex.practicum.accounts.repository.UserRepository;
 
 import java.time.LocalDate;
-import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -24,9 +22,28 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final NotificationsClient notificationsClient;
 
-    public UserInfoResponse getUserInfo(Long userId) {
+    public UserInfoResponse getUserInfoByUserId(Long userId) {
+        log.debug("Getting user info for userId: {}", userId);
+
         User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        return new UserInfoResponse(
+                user.getId(),
+                user.getUsername(),
+                user.getName(),
+                user.getEmail(),
+                user.getBirthdate(),
+                user.getRole()
+        );
+    }
+
+    public UserInfoResponse getUserInfoByUsername(String username) {
+        log.debug("Getting user info for username: {}", username);
+
+        User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         return new UserInfoResponse(
@@ -41,7 +58,7 @@ public class UserService {
 
     @Transactional
     public void updatePassword(Long userId, UpdatePasswordRequest request) {
-        log.info("Updating password for user: {}", userId);
+        log.debug("Updating password for userId: {}", userId);
 
         List<String> errors = validatePasswordUpdate(request);
         if (!errors.isEmpty()) {
@@ -54,17 +71,18 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         userRepository.save(user);
 
-        log.info("Password updated successfully for user: {}", userId);
+        log.debug("Password updated successfully for userId: {}", userId);
+
+        notificationsClient.sendNotification(
+                userId,
+                "PASSWORD_CHANGE",
+                "Your password has been changed successfully. If you didn't make this change, please contact support immediately."
+        );
     }
 
     @Transactional
     public UserInfoResponse updateUserInfo(Long userId, UpdateUserInfoRequest request) {
-        log.info("Updating user info for user: {}", userId);
-
-        List<String> errors = validateUserInfoUpdate(request);
-        if (!errors.isEmpty()) {
-            throw new ValidationException(errors);
-        }
+        log.debug("Updating user info for userId: {}", userId);
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
@@ -75,7 +93,7 @@ public class UserService {
 
         User savedUser = userRepository.save(user);
 
-        log.info("User info updated successfully for user: {}", userId);
+        log.debug("User info updated successfully for userId: {}", userId);
 
         return new UserInfoResponse(
                 savedUser.getId(),
@@ -87,16 +105,18 @@ public class UserService {
         );
     }
 
-    @Transactional
-    public void deleteUser(Long userId) {
-        log.info("Deleting user: {}", userId);
+    public List<UserListResponse> getAllUsers() {
+        log.debug("Getting all users list");
 
-        // TODO: Проверить что у пользователя нет ненулевых счетов
-        // Это нужно реализовать когда появится функциональность счетов
+        List<User> users = (List<User>) userRepository.findAll();
 
-        userRepository.deleteById(userId);
-
-        log.info("User deleted successfully: {}", userId);
+        return users.stream()
+                .map(user -> new UserListResponse(
+                        user.getId(),
+                        user.getUsername(),
+                        user.getName()
+                ))
+                .collect(Collectors.toList());
     }
 
     private List<String> validatePasswordUpdate(UpdatePasswordRequest request) {
@@ -113,37 +133,6 @@ public class UserService {
         if (request.getPassword() != null && request.getConfirmPassword() != null) {
             if (!request.getPassword().equals(request.getConfirmPassword())) {
                 errors.add("Пароли не совпадают");
-            }
-        }
-
-        if (request.getPassword() != null && request.getPassword().length() < 4) {
-            errors.add("Пароль должен содержать минимум 4 символа");
-        }
-
-        return errors;
-    }
-
-    private List<String> validateUserInfoUpdate(UpdateUserInfoRequest request) {
-        List<String> errors = new ArrayList<>();
-
-        if (request.getName() == null || request.getName().trim().isEmpty()) {
-            errors.add("Имя обязательно для заполнения");
-        }
-
-        if (request.getBirthdate() == null) {
-            errors.add("Дата рождения обязательна для заполнения");
-        }
-
-        if (request.getBirthdate() != null) {
-            int age = Period.between(request.getBirthdate(), LocalDate.now()).getYears();
-            if (age < 18) {
-                errors.add("Возраст должен быть не менее 18 лет");
-            }
-        }
-
-        if (request.getEmail() != null && !request.getEmail().isEmpty()) {
-            if (!request.getEmail().matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
-                errors.add("Некорректный формат email");
             }
         }
 

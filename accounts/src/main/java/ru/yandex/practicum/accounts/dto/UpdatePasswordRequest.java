@@ -1,9 +1,15 @@
 package ru.yandex.practicum.accounts.dto;
 
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 public class UpdatePasswordRequest {
-    private final String password;
-    private final String confirmPassword;
+    private String password;
+    private String confirmPassword;
 }
