@@ -19,6 +19,10 @@
 		<module>frontui</module>
 		<module>gateway</module>
 		<module>accounts</module>
+		<module>blocker</module>
+		<module>cash</module>
+        <module>transfer</module>
+		<module>notifications</module>
 	</modules>
 
 	<properties>
