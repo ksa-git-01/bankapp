@@ -1,8 +1,9 @@
 package ru.yandex.practicum.frontui.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -16,30 +17,25 @@ import java.util.List;
 import java.util.Map;
 
 @Service
+@RequiredArgsConstructor
 @Slf4j
 public class AccountsClient {
 
     private final RestTemplate restTemplate;
-    private final ObjectMapper objectMapper = new ObjectMapper();
-    @Value("${accounts.service.url}")
-    private String accountsUrl;
+    private final ObjectMapper objectMapper;
 
-    public AccountsClient(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
-    }
-
-    public RegistrationResponse registerUser(RegistrationRequest request) {
-        log.info("Registering user via accounts service: {}", request.getLogin());
+    public void registerUser(RegistrationRequest request) {
+        log.debug("Registering user via accounts service: {}", request.login());
 
         try {
             ResponseEntity<RegistrationResponse> response = restTemplate.postForEntity(
-                    accountsUrl + "/api/registration",
+                    "/accounts/api/registration",
                     request,
                     RegistrationResponse.class
             );
 
-            log.info("User registered successfully: {}", request.getLogin());
-            return response.getBody();
+            log.debug("User registered successfully: {}", request.login());
+            response.getBody();
 
         } catch (HttpClientErrorException e) {
             log.error("Registration failed: {}", e.getResponseBodyAsString());
@@ -47,33 +43,48 @@ public class AccountsClient {
         }
     }
 
-    public UserInfoResponse getUserInfo(Long userId) {
-        log.info("Getting user info for userId: {}", userId);
+    public UserInfoResponse getUserInfoByUserId(Long userId) {
+        log.debug("Getting user info for userId: {}", userId);
 
         try {
             ResponseEntity<UserInfoResponse> response = restTemplate.getForEntity(
-                    accountsUrl + "/api/users/" + userId,
+                    "/accounts/api/users/id/" + userId,
                     UserInfoResponse.class
             );
 
             return response.getBody();
 
         } catch (HttpClientErrorException e) {
-            log.error("Failed to get user info: {}", e.getResponseBodyAsString());
+            throw new AccountsServiceException(extractErrorMessage(e));
+        }
+    }
+
+    public UserInfoResponse getUserInfoByUsername(String username) {
+        log.debug("Getting user info for username: {}", username);
+
+        try {
+            ResponseEntity<UserInfoResponse> response = restTemplate.getForEntity(
+                    "/accounts/api/users/username/" + username,
+                    UserInfoResponse.class
+            );
+
+            return response.getBody();
+
+        } catch (HttpClientErrorException e) {
             throw new AccountsServiceException(extractErrorMessage(e));
         }
     }
 
     public void updatePassword(Long userId, UpdatePasswordRequest request) {
-        log.info("Updating password for userId: {}", userId);
+        log.debug("Updating password for userId: {}", userId);
 
         try {
             restTemplate.put(
-                    accountsUrl + "/api/users/" + userId + "/password",
+                    "/accounts/api/users/" + userId + "/password",
                     request
             );
 
-            log.info("Password updated successfully");
+            log.debug("Password updated successfully");
 
         } catch (HttpClientErrorException e) {
             log.error("Failed to update password: {}", e.getResponseBodyAsString());
@@ -81,19 +92,19 @@ public class AccountsClient {
         }
     }
 
-    public UserInfoResponse updateUserInfo(Long userId, UpdateUserInfoRequest request) {
-        log.info("Updating user info for userId: {}", userId);
+    public void updateUserInfo(Long userId, UpdateUserInfoRequest request) {
+        log.debug("Updating user info for userId: {}", userId);
 
         try {
             ResponseEntity<UserInfoResponse> response = restTemplate.exchange(
-                    accountsUrl + "/api/users/" + userId,
+                    "/accounts/api/users/" + userId,
                     HttpMethod.PUT,
                     new org.springframework.http.HttpEntity<>(request),
                     UserInfoResponse.class
             );
 
-            log.info("User info updated successfully");
-            return response.getBody();
+            log.debug("User info updated successfully");
+            response.getBody();
 
         } catch (HttpClientErrorException e) {
             log.error("Failed to update user info: {}", e.getResponseBodyAsString());
@@ -101,22 +112,80 @@ public class AccountsClient {
         }
     }
 
-    public void deleteUser(Long userId) {
-        log.info("Deleting user: {}", userId);
+    public List<AccountDto> getUserAccounts(Long userId) {
+        log.debug("Getting accounts for userId: {}", userId);
 
         try {
-            restTemplate.delete(accountsUrl + "/api/users/" + userId);
-            log.info("User deleted successfully");
+            ResponseEntity<List<AccountDto>> response = restTemplate.exchange(
+                    "/accounts/api/accounts/user/" + userId,
+                    HttpMethod.GET,
+                    null,
+                    new ParameterizedTypeReference<>() {
+                    }
+            );
+
+            return response.getBody();
 
         } catch (HttpClientErrorException e) {
-            log.error("Failed to delete user: {}", e.getResponseBodyAsString());
+            log.error("Failed to get user accounts: {}", e.getResponseBodyAsString());
             throw new AccountsServiceException(extractErrorMessage(e));
         }
     }
 
-    /**
-     * Извлекает читаемое сообщение об ошибке из HTTP exception
-     */
+    public void createAccount(Long userId, String currency) {
+        log.debug("Creating account: userId={}, currency={}", userId, currency);
+
+        CreateAccountRequest request = new CreateAccountRequest(userId, currency);
+
+        try {
+            ResponseEntity<AccountDto> response = restTemplate.postForEntity(
+                    "/accounts/api/accounts",
+                    request,
+                    AccountDto.class
+            );
+
+            log.debug("Account created successfully");
+            response.getBody();
+
+        } catch (HttpClientErrorException e) {
+            log.error("Failed to create account: {}", e.getResponseBodyAsString());
+            throw new AccountsServiceException(extractErrorMessage(e));
+        }
+    }
+
+    public void deleteAccount(Long userId, String currency) {
+        log.debug("Deleting account: userId={}, currency={}", userId, currency);
+
+        try {
+            restTemplate.delete("/accounts/api/accounts/user/" + userId + "/currency/" + currency);
+            log.debug("Account deleted successfully");
+
+        } catch (HttpClientErrorException e) {
+            log.error("Failed to delete account: {}", e.getResponseBodyAsString());
+            throw new AccountsServiceException(extractErrorMessage(e));
+        }
+    }
+
+    public List<UserListDto> getAllUsers() {
+        log.debug("Getting all users list");
+
+        try {
+            ResponseEntity<List<UserListDto>> response = restTemplate.exchange(
+                    "/accounts/api/users",
+                    HttpMethod.GET,
+                    null,
+                    new ParameterizedTypeReference<>() {
+                    }
+            );
+
+            return response.getBody();
+
+        } catch (HttpClientErrorException e) {
+            log.error("Failed to get users list: {}", e.getResponseBodyAsString());
+            return List.of();
+        }
+    }
+
     private String extractErrorMessage(HttpClientErrorException e) {
         try {
             String responseBody = e.getResponseBodyAsString();
@@ -124,7 +193,6 @@ public class AccountsClient {
             @SuppressWarnings("unchecked")
             Map<String, Object> errorBody = objectMapper.readValue(responseBody, Map.class);
 
-            // Пытаемся получить список ошибок
             @SuppressWarnings("unchecked")
             List<String> errors = (List<String>) errorBody.get("errors");
 
@@ -132,7 +200,6 @@ public class AccountsClient {
                 return String.join("; ", errors);
             }
 
-            // Если нет списка, берем message
             String message = (String) errorBody.get("message");
             if (message != null) {
                 return message;
