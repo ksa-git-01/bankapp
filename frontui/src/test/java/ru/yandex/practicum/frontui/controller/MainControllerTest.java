@@ -24,6 +24,7 @@ import ru.yandex.practicum.frontui.service.AccountsClient;
 import ru.yandex.practicum.frontui.service.CashClient;
 import ru.yandex.practicum.frontui.service.TransferClient;
 
+import java.math.BigDecimal;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.interfaces.RSAPrivateKey;
@@ -86,8 +87,8 @@ class MainControllerTest {
                 1L, "testuser", "Test User", "test@yandex.ru", LocalDate.of(1990, 1, 1), "USER"
         );
         List<AccountDto> accounts = List.of(
-                new AccountDto(1L, "RUB", 1000.0),
-                new AccountDto(2L, "EUR", 500.0)
+                new AccountDto(1L, "RUB", BigDecimal.valueOf(1000.0)),
+                new AccountDto(2L, "EUR", BigDecimal.valueOf(500.0))
         );
         List<UserListDto> users = List.of(
                 new UserListDto(2L, "user2", "Second User")
