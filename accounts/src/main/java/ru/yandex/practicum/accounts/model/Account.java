@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Table(name = "accounts")
@@ -19,7 +20,7 @@ public class Account {
     private Long id;
     private Long userId;
     private String currency; // RUB, USD, EUR
-    private Double balance;
+    private BigDecimal balance;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

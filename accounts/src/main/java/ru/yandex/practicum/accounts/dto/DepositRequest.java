@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -12,5 +14,5 @@ import lombok.Setter;
 public class DepositRequest {
     private Long userId;
     private String currency;
-    private Double amount;
+    private BigDecimal amount;
 }
