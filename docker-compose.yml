@@ -18,6 +18,25 @@ services:
     networks:
       - bank-network
 
+  exchange-postgres:
+    image: postgres:16.9
+    container_name: exchange-postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-exchange}
+      POSTGRES_USER: ${POSTGRES_USER:-exchange_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+    ports:
+      - "${POSTGRES_PORT:-15434}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - exchange_postgres_data:/var/lib/postgresql/data
+    networks:
+      - bank-network
+
   bankapp-keycloak-postgres:
     image: postgres:16.9
     container_name: bankapp-keycloak-postgres
@@ -70,6 +89,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    restart: unless-stopped
 
   gateway:
     build:
@@ -137,6 +157,7 @@ services:
       - "8083:8083"
     environment:
       SPRING_CLOUD_CONSUL_HOST: consul
+      SPRING_CLOUD_CONSUL_PORT: 8500
       CASH_CLIENT_SECRET: CASH-client-secret-123456
     depends_on:
       consul:
@@ -153,6 +174,7 @@ services:
       - "8084:8084"
     environment:
       SPRING_CLOUD_CONSUL_HOST: consul
+      SPRING_CLOUD_CONSUL_PORT: 8500
     depends_on:
       consul:
         condition: service_healthy
@@ -168,6 +190,7 @@ services:
       - "8085:8085"
     environment:
       SPRING_CLOUD_CONSUL_HOST: consul
+      SPRING_CLOUD_CONSUL_PORT: 8500
     depends_on:
       consul:
         condition: service_healthy
@@ -183,7 +206,48 @@ services:
       - "8086:8086"
     environment:
       SPRING_CLOUD_CONSUL_HOST: consul
+      SPRING_CLOUD_CONSUL_PORT: 8500
       TRANSFER_CLIENT_SECRET: TRANSFER-client-secret-123456
+    depends_on:
+      consul:
+        condition: service_healthy
+    networks:
+      - bank-network
+
+  exchange:
+    build:
+      context: .
+      dockerfile: exchange/Dockerfile
+    container_name: exchange
+    ports:
+      - "8087:8087"
+    environment:
+      SPRING_CLOUD_CONSUL_HOST: consul
+      SPRING_CLOUD_CONSUL_PORT: 8500
+      SPRING_DATASOURCE_HOST: exchange-postgres
+      SPRING_DATASOURCE_PORT: 5432
+      SPRING_DATASOURCE_NAME: exchange
+      SPRING_DATASOURCE_USER: exchange_user
+      SPRING_DATASOURCE_PASSWORD: password
+    depends_on:
+      consul:
+        condition: service_healthy
+      exchange-postgres:
+        condition: service_healthy
+    networks:
+      - bank-network
+
+  generator:
+    build:
+      context: .
+      dockerfile: generator/Dockerfile
+    container_name: generator
+    ports:
+      - "8088:8088"
+    environment:
+      SPRING_CLOUD_CONSUL_HOST: consul
+      SPRING_CLOUD_CONSUL_PORT: 8500
+      GENERATOR_CLIENT_SECRET: GENERATOR-client-secret-123456
     depends_on:
       consul:
         condition: service_healthy
@@ -192,6 +256,7 @@ services:
 
 volumes:
   accounts_postgres_data:
+  exchange_postgres_data:
   bankapp_keycloak_postgres_data:
 
 networks:

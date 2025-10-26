@@ -11,6 +11,8 @@ COPY cash/pom.xml ./cash/
 COPY blocker/pom.xml ./blocker/
 COPY transfer/pom.xml ./transfer/
 COPY notifications/pom.xml ./notifications/
+COPY exchange/pom.xml ./exchange/
+COPY generator/pom.xml ./generator/
 
 # Скачиваем зависимости
 RUN mvn dependency:go-offline -B
