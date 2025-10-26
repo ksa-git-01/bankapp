@@ -7,6 +7,8 @@ import ru.yandex.practicum.transfer.dto.TransferRequest;
 import ru.yandex.practicum.transfer.dto.TransferResponse;
 import ru.yandex.practicum.transfer.exception.TransferException;
 
+import java.math.BigDecimal;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -22,7 +24,7 @@ public class TransferService {
 
         try {
             // Снять со счета отправителя
-            Double fromBalance = accountsClient.withdraw(
+            BigDecimal fromBalance = accountsClient.withdraw(
                     request.fromUserId(),
                     request.fromCurrency(),
                     request.amount()
@@ -32,7 +34,7 @@ public class TransferService {
 
             try {
                 // Пополнить счет получателя
-                Double toBalance = accountsClient.deposit(
+                BigDecimal toBalance = accountsClient.deposit(
                         request.toUserId(),
                         request.toCurrency(),
                         request.amount()

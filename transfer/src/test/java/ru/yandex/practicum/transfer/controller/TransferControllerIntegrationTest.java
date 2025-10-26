@@ -20,6 +20,7 @@ import ru.yandex.practicum.transfer.dto.TransferRequest;
 import ru.yandex.practicum.transfer.dto.TransferResponse;
 import ru.yandex.practicum.transfer.service.TransferService;
 
+import java.math.BigDecimal;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.interfaces.RSAPrivateKey;
@@ -74,8 +75,10 @@ class TransferControllerIntegrationTest {
 
     @Test
     void transferSuccess() throws Exception {
-        TransferRequest request = new TransferRequest(1L, 2L, "RUB", "RUB", 100.0);
-        TransferResponse response = new TransferResponse(true, "Transfer completed successfully", 900.0, 1100.0);
+        TransferRequest request = new TransferRequest(1L, 2L, "RUB", "RUB", BigDecimal.valueOf(100.0));
+        TransferResponse response = new TransferResponse(true, "Transfer completed successfully",
+                BigDecimal.valueOf(900.0),
+                BigDecimal.valueOf(1100.0));
 
         when(transferService.transfer(any(TransferRequest.class))).thenReturn(response);
 
@@ -95,7 +98,7 @@ class TransferControllerIntegrationTest {
 
     @Test
     void transferWithoutOAuth2Token() throws Exception {
-        TransferRequest request = new TransferRequest(1L, 2L, "RUB", "RUB", 100.0);
+        TransferRequest request = new TransferRequest(1L, 2L, "RUB", "RUB", BigDecimal.valueOf(100.0));
 
         mockMvc.perform(post("/api/transfer")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -106,7 +109,7 @@ class TransferControllerIntegrationTest {
 
     @Test
     void transferWithoutUserJwtToken() throws Exception {
-        TransferRequest request = new TransferRequest(1L, 2L, "RUB", "RUB", 100.0);
+        TransferRequest request = new TransferRequest(1L, 2L, "RUB", "RUB", BigDecimal.valueOf(100.0));
 
         mockMvc.perform(post("/api/transfer")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -121,7 +124,7 @@ class TransferControllerIntegrationTest {
 
     @Test
     void transferWhenUserIdMismatch() throws Exception {
-        TransferRequest request = new TransferRequest(2L, 3L, "RUB", "RUB", 100.0);
+        TransferRequest request = new TransferRequest(2L, 3L, "RUB", "RUB", BigDecimal.valueOf(100.0));
         String anotherUserJwt = generateUserJwt(1L);
 
         mockMvc.perform(post("/api/transfer")
@@ -138,7 +141,7 @@ class TransferControllerIntegrationTest {
 
     @Test
     void transferWithoutRequiredRole() throws Exception {
-        TransferRequest request = new TransferRequest(1L, 2L, "RUB", "RUB", 100.0);
+        TransferRequest request = new TransferRequest(1L, 2L, "RUB", "RUB", BigDecimal.valueOf(100.0));
 
         mockMvc.perform(post("/api/transfer")
                         .contentType(MediaType.APPLICATION_JSON)

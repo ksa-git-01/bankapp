@@ -9,6 +9,8 @@ import org.springframework.web.client.RestTemplate;
 import ru.yandex.practicum.transfer.dto.AccountsRequest;
 import ru.yandex.practicum.transfer.dto.AccountsResponse;
 
+import java.math.BigDecimal;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -16,7 +18,7 @@ public class AccountsClient {
 
     private final RestTemplate restTemplate;
 
-    public Double deposit(Long userId, String currency, Double amount) {
+    public BigDecimal deposit(Long userId, String currency, BigDecimal amount) {
         log.debug("Depositing {} {} to user {}", amount, currency, userId);
 
         AccountsRequest request = new AccountsRequest(userId, currency, amount);
@@ -36,7 +38,7 @@ public class AccountsClient {
         }
     }
 
-    public Double withdraw(Long userId, String currency, Double amount) {
+    public BigDecimal withdraw(Long userId, String currency, BigDecimal amount) {
         log.debug("Withdrawing {} {} from user {}", amount, currency, userId);
 
         AccountsRequest request = new AccountsRequest(userId, currency, amount);
