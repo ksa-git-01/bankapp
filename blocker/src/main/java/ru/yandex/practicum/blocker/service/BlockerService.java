@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.blocker.dto.OperationCheckRequest;
 import ru.yandex.practicum.blocker.dto.OperationCheckResponse;
 
+import java.math.BigDecimal;
 import java.time.LocalTime;
 
 @Service
@@ -16,7 +17,7 @@ public class BlockerService {
                 request.getUserId(), request.getOperation(), request.getAmount(), request.getCurrency());
 
         // Блокируем операции больше 100000
-        if (request.getAmount() > 100000) {
+        if (request.getAmount().compareTo(BigDecimal.valueOf(100000)) > 0) {
             log.warn("Suspicious operation blocked: very large amount");
             return new OperationCheckResponse(
                     true,
