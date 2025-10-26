@@ -23,7 +23,8 @@
 		<module>cash</module>
         <module>transfer</module>
 		<module>notifications</module>
-	</modules>
+        <module>exchange</module>
+    </modules>
 
 	<properties>
 		<maven.compiler.source>21</maven.compiler.source>
