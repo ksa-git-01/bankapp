@@ -43,12 +43,12 @@ class TransferServiceIntegrationTest {
 
         assertTrue(response.success());
         assertEquals("Transfer completed successfully", response.message());
-        assertEquals(900.0, response.fromBalance());
-        assertEquals(1100.0, response.toBalance());
+        assertEquals(BigDecimal.valueOf(900.0), response.fromBalance());
+        assertEquals(BigDecimal.valueOf(1100.0), response.toBalance());
 
         verify(accountsClient).withdraw(1L, "RUB", BigDecimal.valueOf(100.0));
         verify(accountsClient).deposit(2L, "RUB", BigDecimal.valueOf(100.0));
-        verify(notificationsClient, times(2)).sendNotification(anyLong(), anyString(), anyString(), BigDecimal.valueOf(anyDouble()), anyString());
+        verify(notificationsClient, times(2)).sendNotification(anyLong(), anyString(), anyString(), eq(BigDecimal.valueOf(100.0)), anyString());
     }
 
     @Test

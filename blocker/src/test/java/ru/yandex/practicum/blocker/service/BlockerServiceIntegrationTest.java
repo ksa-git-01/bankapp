@@ -6,6 +6,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.blocker.dto.OperationCheckRequest;
 import ru.yandex.practicum.blocker.dto.OperationCheckResponse;
 
+import java.math.BigDecimal;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -16,7 +18,7 @@ class BlockerServiceIntegrationTest {
 
     @Test
     void checkOperationWithNormalAmount() {
-        OperationCheckRequest request = new OperationCheckRequest(1L, "WITHDRAW", "RUB", 5000.0);
+        OperationCheckRequest request = new OperationCheckRequest(1L, "WITHDRAW", "RUB", BigDecimal.valueOf(5000.0));
 
         OperationCheckResponse response = blockerService.checkOperation(request);
 
@@ -26,7 +28,7 @@ class BlockerServiceIntegrationTest {
 
     @Test
     void checkOperationWithAmountAboveLimit() {
-        OperationCheckRequest request = new OperationCheckRequest(1L, "WITHDRAW", "RUB", 100001.0);
+        OperationCheckRequest request = new OperationCheckRequest(1L, "WITHDRAW", "RUB", BigDecimal.valueOf(100001.0));
 
         OperationCheckResponse response = blockerService.checkOperation(request);
 
@@ -37,7 +39,7 @@ class BlockerServiceIntegrationTest {
 
     @Test
     void checkOperationDepositOperationSuccess() {
-        OperationCheckRequest request = new OperationCheckRequest(1L, "DEPOSIT", "RUB", 50000.0);
+        OperationCheckRequest request = new OperationCheckRequest(1L, "DEPOSIT", "RUB", BigDecimal.valueOf(50000.0));
 
         OperationCheckResponse response = blockerService.checkOperation(request);
 
@@ -47,7 +49,7 @@ class BlockerServiceIntegrationTest {
 
     @Test
     void checkOperationWithdrawOperationSuccess() {
-        OperationCheckRequest request = new OperationCheckRequest(1L, "WITHDRAW", "RUB", 50000.0);
+        OperationCheckRequest request = new OperationCheckRequest(1L, "WITHDRAW", "RUB", BigDecimal.valueOf(50000.0));
 
         OperationCheckResponse response = blockerService.checkOperation(request);
 

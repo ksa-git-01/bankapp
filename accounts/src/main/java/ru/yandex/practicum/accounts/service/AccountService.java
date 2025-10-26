@@ -120,7 +120,7 @@ public class AccountService {
                         "Счет в валюте " + currency + " не найден"
                 ));
 
-        if (account.getBalance().compareTo(BigDecimal.ZERO) <= 0) {
+        if (account.getBalance().compareTo(BigDecimal.ZERO) > 0) {
             throw new IllegalArgumentException(
                     "Невозможно удалить счет с ненулевым балансом"
             );

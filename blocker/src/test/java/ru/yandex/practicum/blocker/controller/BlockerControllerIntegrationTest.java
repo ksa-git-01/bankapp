@@ -20,6 +20,7 @@ import ru.yandex.practicum.blocker.dto.OperationCheckRequest;
 import ru.yandex.practicum.blocker.dto.OperationCheckResponse;
 import ru.yandex.practicum.blocker.service.BlockerService;
 
+import java.math.BigDecimal;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.interfaces.RSAPrivateKey;
@@ -74,7 +75,7 @@ class BlockerControllerIntegrationTest {
 
     @Test
     void checkOperationSuccess() throws Exception {
-        OperationCheckRequest request = new OperationCheckRequest(1L, "WITHDRAW", "RUB", 5000.0);
+        OperationCheckRequest request = new OperationCheckRequest(1L, "WITHDRAW", "RUB", BigDecimal.valueOf(5000.0));
         OperationCheckResponse response = new OperationCheckResponse(false, null);
 
         when(blockerService.checkOperation(any(OperationCheckRequest.class))).thenReturn(response);
@@ -93,7 +94,7 @@ class BlockerControllerIntegrationTest {
 
     @Test
     void checkOperationWithoutOAuth2Token() throws Exception {
-        OperationCheckRequest request = new OperationCheckRequest(1L, "WITHDRAW", "RUB", 5000.0);
+        OperationCheckRequest request = new OperationCheckRequest(1L, "WITHDRAW", "RUB", BigDecimal.valueOf(5000.0));
 
         mockMvc.perform(post("/api/blocker/check")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -104,7 +105,7 @@ class BlockerControllerIntegrationTest {
 
     @Test
     void checkOperationWithoutUserJwtToken() throws Exception {
-        OperationCheckRequest request = new OperationCheckRequest(1L, "WITHDRAW", "RUB", 5000.0);
+        OperationCheckRequest request = new OperationCheckRequest(1L, "WITHDRAW", "RUB", BigDecimal.valueOf(5000.0));
 
         mockMvc.perform(post("/api/blocker/check")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -117,7 +118,7 @@ class BlockerControllerIntegrationTest {
 
     @Test
     void checkOperationWhenUserIdMismatch() throws Exception {
-        OperationCheckRequest request = new OperationCheckRequest(2L, "WITHDRAW", "RUB", 5000.0);
+        OperationCheckRequest request = new OperationCheckRequest(2L, "WITHDRAW", "RUB", BigDecimal.valueOf(5000.0));
         String anotherUserJwt = generateUserJwt(1L);
 
         mockMvc.perform(post("/api/blocker/check")
@@ -132,7 +133,7 @@ class BlockerControllerIntegrationTest {
 
     @Test
     void checkOperationWithoutRequiredRole() throws Exception {
-        OperationCheckRequest request = new OperationCheckRequest(1L, "WITHDRAW", "RUB", 5000.0);
+        OperationCheckRequest request = new OperationCheckRequest(1L, "WITHDRAW", "RUB", BigDecimal.valueOf(5000.0));
 
         mockMvc.perform(post("/api/blocker/check")
                         .contentType(MediaType.APPLICATION_JSON)

@@ -45,11 +45,11 @@ class CashServiceIntegrationTest {
 
         assertTrue(response.success());
         assertEquals("Operation completed successfully", response.message());
-        assertEquals(5000.0, response.newBalance());
+        assertEquals(BigDecimal.valueOf(5000.0), response.newBalance());
 
         verify(blockerClient).checkOperation(any(CashOperationRequest.class));
         verify(accountsClient).deposit(1L, "RUB", BigDecimal.valueOf(1000.0));
-        verify(notificationsClient).sendNotification(eq(1L), eq("DEPOSIT"), anyString(), BigDecimal.valueOf(eq(1000.0)), eq("RUB"));
+        verify(notificationsClient).sendNotification(eq(1L), eq("DEPOSIT"), anyString(), eq(BigDecimal.valueOf(1000.0)), eq("RUB"));
     }
 
     @Test
@@ -57,17 +57,17 @@ class CashServiceIntegrationTest {
         CashOperationRequest request = new CashOperationRequest(1L, "WITHDRAW", "RUB", BigDecimal.valueOf(500));
 
         when(blockerClient.checkOperation(any(CashOperationRequest.class))).thenReturn(false);
-        when(accountsClient.withdraw(1L, "RUB", BigDecimal.valueOf(500.0))).thenReturn(BigDecimal.valueOf(3500.0));
+        when(accountsClient.withdraw(1L, "RUB", BigDecimal.valueOf(500))).thenReturn(BigDecimal.valueOf(3500.0));
 
         CashOperationResponse response = cashService.processCashOperation(request);
 
         assertTrue(response.success());
         assertEquals("Operation completed successfully", response.message());
-        assertEquals(3500.0, response.newBalance());
+        assertEquals(BigDecimal.valueOf(3500.0), response.newBalance());
 
         verify(blockerClient).checkOperation(any(CashOperationRequest.class));
-        verify(accountsClient).withdraw(1L, "RUB", BigDecimal.valueOf(500.0));
-        verify(notificationsClient).sendNotification(eq(1L), eq("WITHDRAW"), anyString(), BigDecimal.valueOf(eq(500.0)), eq("RUB"));
+        verify(accountsClient).withdraw(1L, "RUB", BigDecimal.valueOf(500));
+        verify(notificationsClient).sendNotification(eq(1L), eq("WITHDRAW"), anyString(), eq(BigDecimal.valueOf(500)), eq("RUB"));
     }
 
     @Test
@@ -120,7 +120,7 @@ class CashServiceIntegrationTest {
 
         assertTrue(response.success());
         assertEquals("Operation completed successfully", response.message());
-        assertEquals(5000.0, response.newBalance());
+        assertEquals(BigDecimal.valueOf(5000.0), response.newBalance());
 
         verify(blockerClient).checkOperation(any(CashOperationRequest.class));
         verify(accountsClient).deposit(1L, "RUB", BigDecimal.valueOf(1000.0));
