@@ -1,4 +1,6 @@
 package ru.yandex.practicum.cash.dto;
 
-public record CashOperationResponse(boolean success, String message, Double newBalance) {
+import java.math.BigDecimal;
+
+public record CashOperationResponse(boolean success, String message, BigDecimal newBalance) {
 }
