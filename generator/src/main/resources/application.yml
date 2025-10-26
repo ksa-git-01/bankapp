@@ -1,0 +1,58 @@
+spring:
+  application:
+    name: generator
+  config:
+    import: "optional:consul:"
+  cloud:
+    consul:
+      host: ${SPRING_CLOUD_CONSUL_HOST:localhost}
+      port: ${SPRING_CLOUD_CONSUL_PORT:8500}
+      discovery:
+        enabled: true
+        service-name: ${spring.application.name}
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://bankapp-keycloak:8080/realms/bankapp
+      client:
+        registration:
+          keycloak:
+            client-id: generator-client
+            client-secret: ${GENERATOR_CLIENT_SECRET}
+            authorization-grant-type: client_credentials
+            scope: openid
+        provider:
+          keycloak:
+            token-uri: http://bankapp-keycloak:8080/realms/bankapp/protocol/openid-connect/token
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always
+
+gateway:
+  url: http://gateway
+
+server:
+  port: 8082
+
+rsa:
+  public-key: classpath:certs/public.pem
+
+jwt:
+  expiration: 3600000
+
+logging:
+  level:
+    root: INFO
+    ru.yandex.practicum.accounts: INFO
+    ru.yandex.practicum.accounts.configuration: INFO
+    org.springframework.security: DEBUG
+    org.springframework.security.oauth2: DEBUG
+    org.springframework.security.oauth2.server.resource: TRACE
+    org.springframework.security.oauth2.jwt: TRACE
+    org.springframework.web.client: DEBUG
