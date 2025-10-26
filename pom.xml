@@ -24,7 +24,8 @@
         <module>transfer</module>
 		<module>notifications</module>
         <module>exchange</module>
-    </modules>
+		<module>generator</module>
+	</modules>
 
 	<properties>
 		<maven.compiler.source>21</maven.compiler.source>
