@@ -3,10 +3,7 @@ package ru.yandex.practicum.transfer.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.transfer.dto.ExchangeRate;
-import ru.yandex.practicum.transfer.dto.ExchangeRateResponse;
-import ru.yandex.practicum.transfer.dto.TransferRequest;
-import ru.yandex.practicum.transfer.dto.TransferResponse;
+import ru.yandex.practicum.transfer.dto.*;
 import ru.yandex.practicum.transfer.exception.TransferException;
 
 import javax.swing.text.html.Option;
@@ -30,7 +27,7 @@ public class TransferService {
         log.debug("Processing transfer: from user {} to user {}, amount {} {}",
                 request.fromUserId(), request.toUserId(),
                 request.amount(), request.fromCurrency());
-
+        TransferResponse transferResponse;
         BigDecimal convertedAmount = request.amount();
 
         // Конвертация валюты
@@ -95,7 +92,7 @@ public class TransferService {
                 // Отправить уведомления
                 sendNotifications(request);
 
-                return new TransferResponse(
+                transferResponse = new TransferResponse(
                         true,
                         "Transfer completed successfully",
                         fromBalance,
@@ -116,6 +113,27 @@ public class TransferService {
         } catch (Exception e) {
             log.error("Transfer failed", e);
             throw new TransferException("Transfer failed: " + e.getMessage());
+        }
+
+        saveConversionHistory(request, convertedAmount);
+
+        return transferResponse;
+    }
+
+    private void saveConversionHistory(TransferRequest transferRequest, BigDecimal convertedAmount) {
+        try {
+            exchangeClient.createConversionHistory(
+                    new ExchangeHistoryRequest(
+                            transferRequest.fromUserId(),
+                            transferRequest.fromCurrency(),
+                            transferRequest.amount(),
+                            transferRequest.toUserId(),
+                            transferRequest.toCurrency(),
+                            convertedAmount
+                    ));
+        }
+        catch (Exception e) {
+            log.warn("Saving transfer history failed", e);
         }
     }
 
