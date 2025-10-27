@@ -39,10 +39,7 @@ gateway:
   url: http://gateway
 
 server:
-  port: 8082
-
-rsa:
-  public-key: classpath:certs/public.pem
+  port: 8087
 
 jwt:
   expiration: 3600000
@@ -50,8 +47,8 @@ jwt:
 logging:
   level:
     root: INFO
-    ru.yandex.practicum.accounts: INFO
-    ru.yandex.practicum.accounts.configuration: INFO
+    ru.yandex.practicum.exchange: DEBUG
+    ru.yandex.practicum.exchange.configuration: DEBUG
     org.springframework.security: DEBUG
     org.springframework.security.oauth2: DEBUG
     org.springframework.security.oauth2.server.resource: TRACE

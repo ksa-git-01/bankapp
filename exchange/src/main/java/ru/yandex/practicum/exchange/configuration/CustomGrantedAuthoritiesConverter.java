@@ -16,6 +16,7 @@ public class CustomGrantedAuthoritiesConverter implements Converter<Jwt, Collect
 
     @Override
     public Collection<GrantedAuthority> convert(Jwt jwt) {
+        log.debug("JWT token: {}", jwt.getTokenValue());
         List<GrantedAuthority> authorities = new ArrayList<>();
 
         Map<String, Object> resourceAccess = jwt.getClaim("resource_access");

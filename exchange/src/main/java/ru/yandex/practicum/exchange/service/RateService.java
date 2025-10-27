@@ -1,6 +1,7 @@
 package ru.yandex.practicum.exchange.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.exchange.dto.RatesResponse;
 import ru.yandex.practicum.exchange.model.Rate;
@@ -13,10 +14,12 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class RateService {
     private final RateRepository rateRepository;
 
     public void createRate(String currencyFrom, String currencyTo, BigDecimal ratio){
+        log.debug("Creating rate : {} {} {}", currencyFrom, currencyTo, ratio);
         Optional<Rate> rate = rateRepository.findByCurrencyFromAndCurrencyTo(currencyFrom, currencyTo);
         rate.ifPresentOrElse(r -> {
             r.setRatio(ratio);
