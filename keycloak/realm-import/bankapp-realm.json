@@ -46,6 +46,12 @@
           "name": "notifications-access",
           "description": "Access to notifications service"
         }
+      ],
+      "generator-client": [
+        {
+          "name": "exchange-access",
+          "description": "Access to exchange service"
+        }
       ]
     }
   },
@@ -175,6 +181,37 @@
       "defaultClientScopes": ["accounts-access", "notifications-access"]
     },
     {
+      "clientId": "generator-client",
+      "name": "Rates Generator Application",
+      "enabled": true,
+      "publicClient": false,
+      "protocol": "openid-connect",
+      "standardFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true,
+      "authorizationServicesEnabled": false,
+      "secret": "GENERATOR-client-secret-123456",
+      "attributes": {
+        "client_credentials.use_refresh_token": "false"
+      },
+      "protocolMappers": [
+        {
+          "name": "client-roles-mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-client-role-mapper",
+          "consentRequired": false,
+          "config": {
+            "access.token.claim": "true",
+            "claim.name": "resource_access.generator-client.roles",
+            "jsonType.label": "String",
+            "multivalued": "true",
+            "usermodel.clientRoleMapping.clientId": "generator-client"
+          }
+        }
+      ],
+      "defaultClientScopes": ["exchange-access"]
+    },
+    {
       "clientId": "accounts-service",
       "name": "Accounts Resource Server",
       "enabled": true,
@@ -213,6 +250,14 @@
       "publicClient": true,
       "protocol": "openid-connect",
       "bearerOnly": true
+    },
+    {
+      "clientId": "exchange-service",
+      "name": "Exchange Resource Server",
+      "enabled": true,
+      "publicClient": true,
+      "protocol": "openid-connect",
+      "bearerOnly": true
     }
   ],
   "users": [
@@ -246,6 +291,14 @@
       "serviceAccountClientId": "transfer-client",
       "clientRoles": {
         "transfer-client": ["accounts-access", "notifications-access"]
+      }
+    },
+    {
+      "username": "service-account-generator-client",
+      "enabled": true,
+      "serviceAccountClientId": "generator-client",
+      "clientRoles": {
+        "generator-client": ["exchange-access"]
       }
     }
   ],
@@ -289,6 +342,15 @@
     {
       "name": "transfer-access",
       "description": "Access to Transfer Service",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false"
+      }
+    },
+    {
+      "name": "exchange-access",
+      "description": "Access to Exchange Service",
       "protocol": "openid-connect",
       "attributes": {
         "include.in.token.scope": "true",
