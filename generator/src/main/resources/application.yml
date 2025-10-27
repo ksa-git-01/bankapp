@@ -12,9 +12,6 @@ spring:
         service-name: ${spring.application.name}
   security:
     oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: http://bankapp-keycloak:8080/realms/bankapp
       client:
         registration:
           keycloak:
@@ -38,7 +35,7 @@ gateway:
   url: http://gateway
 
 server:
-  port: 8082
+  port: 8088
 
 rsa:
   public-key: classpath:certs/public.pem
@@ -49,10 +46,9 @@ jwt:
 logging:
   level:
     root: INFO
-    ru.yandex.practicum.accounts: INFO
-    ru.yandex.practicum.accounts.configuration: INFO
+    ru.yandex.practicum.exchange.generator: DEBUG
+    ru.yandex.practicum.exchange.generator.configuration: DEBUG
     org.springframework.security: DEBUG
     org.springframework.security.oauth2: DEBUG
-    org.springframework.security.oauth2.server.resource: TRACE
     org.springframework.security.oauth2.jwt: TRACE
     org.springframework.web.client: DEBUG
