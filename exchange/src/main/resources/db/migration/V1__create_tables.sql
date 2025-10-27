@@ -9,11 +9,11 @@ CREATE TABLE exchange_rate (
 
 CREATE TABLE exchange_history (
     id BIGSERIAL PRIMARY KEY,
-    user_id BIGINT NOT NULL,
+    user_id_from BIGINT NOT NULL,
     currency_from VARCHAR(10) NOT NULL,
     amount_from DOUBLE PRECISION NOT NULL,
+    user_id_to BIGINT NOT NULL,
     currency_to VARCHAR(10) NOT NULL,
     amount_to DOUBLE PRECISION NOT NULL,
-    ratio DOUBLE PRECISION NOT NULL DEFAULT 1.0,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
