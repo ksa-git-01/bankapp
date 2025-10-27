@@ -45,6 +45,10 @@
         {
           "name": "notifications-access",
           "description": "Access to notifications service"
+        },
+        {
+          "name": "exchange-access",
+          "description": "Access to exchange service"
         }
       ],
       "generator-client": [
@@ -178,7 +182,7 @@
           }
         }
       ],
-      "defaultClientScopes": ["accounts-access", "notifications-access"]
+      "defaultClientScopes": ["accounts-access", "notifications-access", "exchange-access"]
     },
     {
       "clientId": "generator-client",
@@ -290,7 +294,7 @@
       "enabled": true,
       "serviceAccountClientId": "transfer-client",
       "clientRoles": {
-        "transfer-client": ["accounts-access", "notifications-access"]
+        "transfer-client": ["accounts-access", "notifications-access", "exchange-access"]
       }
     },
     {
