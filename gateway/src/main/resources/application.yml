@@ -48,7 +48,12 @@ spring:
                 - Path=/transfer/**
               filters:
                 - StripPrefix=1
-
+            - id: exchange-service
+              uri: lb://exchange
+              predicates:
+                - Path=/exchange/**
+              filters:
+                - StripPrefix=1
 management:
   endpoints:
     web:
