@@ -1,0 +1,20 @@
+image:
+  repository: accounts
+  tag: latest
+  pullPolicy: Never
+
+replicaCount: 1
+
+service:
+  type: ClusterIP
+  port: 8087
+
+resources:
+  requests:
+    memory: "128Mi"
+    cpu: "100m"
+  limits:
+    memory: "256Mi"
+    cpu: "200m"
+
+env: []
