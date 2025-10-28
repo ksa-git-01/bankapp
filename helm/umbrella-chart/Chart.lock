@@ -5,5 +5,29 @@ dependencies:
 - name: postgresql-exchange
   repository: file://./charts/postgresql-exchange
   version: 0.1.0
-digest: sha256:9e42fc5ae8b76efa76d69e85dd4e5e9f96d77508d211bf3987a4df94aa66ea38
-generated: "2025-10-28T12:43:17.8406955+03:00"
+- name: accounts
+  repository: file://./charts/accounts
+  version: 0.1.0
+- name: blocker
+  repository: file://./charts/blocker
+  version: 0.1.0
+- name: cash
+  repository: file://./charts/cash
+  version: 0.1.0
+- name: exchange
+  repository: file://./charts/exchange
+  version: 0.1.0
+- name: frontui
+  repository: file://./charts/frontui
+  version: 0.1.0
+- name: generator
+  repository: file://./charts/generator
+  version: 0.1.0
+- name: notifications
+  repository: file://./charts/notifications
+  version: 0.1.0
+- name: transfer
+  repository: file://./charts/transfer
+  version: 0.1.0
+digest: sha256:cbeeb262d22bfda7213f45b247d968fdc2582653b348b69d05c83b9c15050254
+generated: "2025-10-28T18:44:21.6296708+03:00"

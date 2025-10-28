@@ -28,3 +28,12 @@ replay_pid*
 *.iws
 *.iml
 *.ipr
+/helm/umbrella-chart/charts/accounts-0.1.0.tgz
+/helm/umbrella-chart/charts/blocker-0.1.0.tgz
+/helm/umbrella-chart/charts/cash-0.1.0.tgz
+/helm/umbrella-chart/charts/exchange-0.1.0.tgz
+/helm/umbrella-chart/charts/frontui-0.1.0.tgz
+/helm/umbrella-chart/charts/generator-0.1.0.tgz
+/helm/umbrella-chart/charts/notifications-0.1.0.tgz
+/helm/umbrella-chart/test-output.yaml
+/helm/umbrella-chart/charts/transfer-0.1.0.tgz
