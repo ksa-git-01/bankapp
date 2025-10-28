@@ -7,7 +7,7 @@ replicaCount: 1
 
 service:
   type: ClusterIP
-  port: 8087
+  port: 8080
 
 resources:
   requests:
@@ -17,4 +17,9 @@ resources:
     memory: "256Mi"
     cpu: "200m"
 
-env: []
+database:
+  host: postgresql-accounts
+  port: 5432
+  name: accounts_db
+  user: accounts_user
+  password: accounts_password
