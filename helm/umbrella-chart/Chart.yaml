@@ -1,0 +1,14 @@
+apiVersion: v2
+name: banl-app
+description: Umbrella chart for bank application
+type: application
+version: 0.1.0
+appVersion: "1.0"
+
+dependencies:
+  - name: postgresql-accounts
+    version: 0.1.0
+    repository: "file://./charts/postgresql-accounts"
+  - name: postgresql-exchange
+    version: 0.1.0
+    repository: "file://./charts/postgresql-exchange"

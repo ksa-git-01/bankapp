@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "postgresql-exchange.fullname" . }}
+  labels:
+    {{- include "postgresql-exchange.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  clusterIP: None  # Headless service для StatefulSet
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: 5432
+      protocol: TCP
+      name: postgresql
+  selector:
+    {{- include "postgresql-exchange.selectorLabels" . | nindent 4 }}

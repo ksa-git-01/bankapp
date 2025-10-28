@@ -1,4 +1,4 @@
-# Проектная работа 9 спринта
+# Проектная работа 10 спринта
 
 ## Spring Boot приложение BankApp
 
@@ -10,17 +10,22 @@ Spring Boot 3.5.4
 PostgreSQL 16.9
 Maven
 Testcontainers
-Docker & Docker Compose
+Docker
 Keycloak
-Consul
+Minikube
+kubectl
+Helm
 ```
 
 ### Требования к окружению
 
 ```
-Docker Desktop
 JDK 21
 Клонировать репозиторий: https://github.com/ksa-git-01/bankapp.git
+Установлен Docker Desktop
+Установлен kubectl 
+Установлен Minikube
+Установлен Helm 
 ```
 
 ### Запуск тестов
@@ -34,21 +39,23 @@ JDK 21
 Первый запуск может быть долгим, т.к. будут скачаны необходимые образы и зависимости
 
 ### Сборка и запуск
-
-Из корня проекта:
-
+- Запустить Docker Desktop
+- Запустить Minukube:
 ```
-docker-compose up
+minikube start --cpus=4 --memory=4096 --driver=docker
 ```
+- Включить аддон Ingress
+```
+minikube addons enable ingress
+```
+
 
 Используются порты ОС хоста:
-8080..8086 - Сервисы
-15433 - PostgreSQL keycloak
-15432 - PostgreSQL Accounts
-18080 - Веб-интерфейс keycloak
-8500 - Consul 
-
-Первый запуск может быть долгим, т.к. будут скачаны необходимые образы и зависимости
+- 8080..8088 - Сервисы
+- 15433 - PostgreSQL keycloak
+- 15432 - PostgreSQL Accounts
+- 18080 - Веб-интерфейс keycloak
+- 8500 - Consul 
 
 ### Ресурсы проекта
 

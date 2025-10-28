@@ -1,0 +1,9 @@
+dependencies:
+- name: postgresql-accounts
+  repository: file://./charts/postgresql-accounts
+  version: 0.1.0
+- name: postgresql-exchange
+  repository: file://./charts/postgresql-exchange
+  version: 0.1.0
+digest: sha256:9e42fc5ae8b76efa76d69e85dd4e5e9f96d77508d211bf3987a4df94aa66ea38
+generated: "2025-10-28T12:43:17.8406955+03:00"
