@@ -21,27 +21,27 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Slf4j
 public class RemoteAuthenticationProvider implements AuthenticationProvider {
-
-    private final RestTemplate restTemplate;
-
-    private static final String ACCOUNTS_URL = "http://bankapp-accounts";
+    private static final String ACCOUNTS_URL = "http://bankapp-accounts:8080";
 
     @Override
     public Authentication authenticate(Authentication authentication)
             throws AuthenticationException {
+        RestTemplate simpleRestTemplate = new RestTemplate();
 
         String username = authentication.getName();
         String password = authentication.getCredentials().toString();
 
         AuthRequest request = new AuthRequest(username, password);
         log.debug("AuthRequest: {}", request);
-        String url = ACCOUNTS_URL + "/accounts/api/auth";
+        String url = ACCOUNTS_URL + "/api/auth";
+        log.debug("ACCOUNTS_URL: {}", ACCOUNTS_URL + "/api/auth");
 
         AuthResponse response;
         try {
-            response = restTemplate.postForObject(url, request, AuthResponse.class);
+            response = simpleRestTemplate.postForObject(url, request, AuthResponse.class);
             log.debug("AuthResponse: {}", response);
         } catch (Exception e) {
+            log.debug("Authentication failed: {}", e.getMessage());
             throw new BadCredentialsException("Authentication failed: " + e.getMessage());
         }
 
