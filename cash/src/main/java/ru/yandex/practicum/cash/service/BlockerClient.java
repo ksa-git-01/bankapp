@@ -17,12 +17,14 @@ public class BlockerClient {
 
     private final RestTemplate restTemplate;
 
+    private static final String BLOCKER_URL = "http://bankapp-blocker";
+
     public boolean checkOperation(CashOperationRequest request) {
         log.debug("Checking operation with Blocker service");
 
         try {
             ResponseEntity<BlockerOperationCheckResponse> response = restTemplate.postForEntity(
-                    "/blocker/api/blocker/check",
+                    BLOCKER_URL + "/api/blocker/check",
                     request,
                     BlockerOperationCheckResponse.class
             );

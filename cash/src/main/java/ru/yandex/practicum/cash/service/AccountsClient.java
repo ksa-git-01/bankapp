@@ -18,6 +18,8 @@ public class AccountsClient {
 
     private final RestTemplate restTemplate;
 
+    private static final String ACCOUNTS_URL = "http://bankapp-accounts";
+
     public BigDecimal deposit(Long userId, String currency, BigDecimal amount) {
         log.debug("Depositing {} {} to user {}", amount, currency, userId);
 
@@ -25,7 +27,7 @@ public class AccountsClient {
 
         try {
             ResponseEntity<AccountsResponse> response = restTemplate.postForEntity(
-                    "/accounts/api/accounts/deposit",
+                    ACCOUNTS_URL + "/api/accounts/deposit",
                     request,
                     AccountsResponse.class
             );
@@ -45,7 +47,7 @@ public class AccountsClient {
 
         try {
             ResponseEntity<AccountsResponse> response = restTemplate.postForEntity(
-                    "/accounts/api/accounts/withdraw",
+                    ACCOUNTS_URL + "/api/accounts/withdraw",
                     request,
                     AccountsResponse.class
             );
