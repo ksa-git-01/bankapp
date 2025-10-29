@@ -13,14 +13,17 @@ import ru.yandex.practicum.transfer.dto.ExchangeRateResponse;
 @RequiredArgsConstructor
 @Slf4j
 public class ExchangeClient {
+
     private final RestTemplate restTemplate;
+
+    private static final String EXCHANGE_URL = "http://bankapp-exchange";
 
     public ExchangeRateResponse getRates() {
         log.debug("Getting rates");
 
         try {
             ResponseEntity<ExchangeRateResponse> response = restTemplate.getForEntity(
-                    "/exchange/api/rates",
+                    EXCHANGE_URL + "/api/rates",
                     ExchangeRateResponse.class
             );
 
@@ -37,7 +40,7 @@ public class ExchangeClient {
 
         try {
             ResponseEntity<Void> response = restTemplate.postForEntity(
-                    "/exchange/api/exchange",
+                    EXCHANGE_URL + "/api/exchange",
                     request,
                     Void.class
             );
