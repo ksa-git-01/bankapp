@@ -24,6 +24,8 @@ public class RemoteAuthenticationProvider implements AuthenticationProvider {
 
     private final RestTemplate restTemplate;
 
+    private static final String ACCOUNTS_URL = "http://bankapp-accounts";
+
     @Override
     public Authentication authenticate(Authentication authentication)
             throws AuthenticationException {
@@ -33,7 +35,7 @@ public class RemoteAuthenticationProvider implements AuthenticationProvider {
 
         AuthRequest request = new AuthRequest(username, password);
         log.debug("AuthRequest: {}", request);
-        String url = "/accounts/api/auth";
+        String url = ACCOUNTS_URL + "/accounts/api/auth";
 
         AuthResponse response;
         try {

@@ -28,10 +28,12 @@ rsa:
 
 server:
   port: 8080
+  servlet:
+    context-path: /frontui
 
 logging:
   level:
     root: INFO
-    ru.yandex.practicum.frontui: INFO
-    ru.yandex.practicum.frontui.configuration.security: INFO
+    ru.yandex.practicum.frontui: DEBUG
+    ru.yandex.practicum.frontui.configuration.security: DEBUG
     org.springframework.security.oauth2.client: DEBUG
