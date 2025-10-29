@@ -21,7 +21,7 @@ public class NotificationsClient {
 
         try {
             restTemplate.postForEntity(
-                    "/notifications/api/notifications/send",
+                    "http://bankapp-notifications/api/notifications/send",
                     request,
                     NotificationResponse.class
             );

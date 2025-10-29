@@ -19,16 +19,11 @@ import org.springframework.web.client.RestTemplate;
 @Slf4j
 public class OAuth2RestTemplateConfig {
 
-    @Value("${gateway.url}")
-    private String gatewayUrl;
-
     @Bean
-    @LoadBalanced
     public RestTemplate restTemplate(
             OAuth2AuthorizedClientManager authorizedClientManager) {
 
         RestTemplate restTemplate = new RestTemplateBuilder()
-                .rootUri(gatewayUrl)
                 .build();
 
         restTemplate.getInterceptors().add(
