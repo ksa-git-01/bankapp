@@ -18,6 +18,8 @@ public class TransferClient {
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
+    private static final String TRANSFER_URL = "http://bankapp-transfer";
+
     public void transfer(Long fromUserId, Long toUserId,
                          String fromCurrency, String toCurrency,
                          Double amount) {
@@ -34,7 +36,7 @@ public class TransferClient {
 
         try {
             ResponseEntity<Map> response = restTemplate.postForEntity(
-                    "/transfer/api/transfer",
+                    TRANSFER_URL + "/api/transfer",
                     request,
                     Map.class
             );
