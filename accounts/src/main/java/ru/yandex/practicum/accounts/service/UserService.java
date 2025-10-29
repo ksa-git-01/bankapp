@@ -5,12 +5,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.yandex.practicum.accounts.dto.*;
+import ru.yandex.practicum.accounts.dto.UpdatePasswordRequest;
+import ru.yandex.practicum.accounts.dto.UpdateUserInfoRequest;
+import ru.yandex.practicum.accounts.dto.UserInfoResponse;
+import ru.yandex.practicum.accounts.dto.UserListResponse;
 import ru.yandex.practicum.accounts.exception.ValidationException;
 import ru.yandex.practicum.accounts.model.User;
 import ru.yandex.practicum.accounts.repository.UserRepository;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;

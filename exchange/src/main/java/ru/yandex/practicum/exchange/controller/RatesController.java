@@ -1,14 +1,12 @@
 package ru.yandex.practicum.exchange.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.exchange.dto.RatesRequest;
 import ru.yandex.practicum.exchange.dto.RatesResponse;
 import ru.yandex.practicum.exchange.service.RateService;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @RestController

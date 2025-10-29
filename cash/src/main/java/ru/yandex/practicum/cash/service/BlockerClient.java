@@ -8,8 +8,6 @@ import org.springframework.web.client.RestTemplate;
 import ru.yandex.practicum.cash.dto.BlockerOperationCheckResponse;
 import ru.yandex.practicum.cash.dto.CashOperationRequest;
 
-import java.util.Map;
-
 @Service
 @RequiredArgsConstructor
 @Slf4j

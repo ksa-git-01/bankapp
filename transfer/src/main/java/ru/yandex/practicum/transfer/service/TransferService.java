@@ -6,11 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.transfer.dto.*;
 import ru.yandex.practicum.transfer.exception.TransferException;
 
-import javax.swing.text.html.Option;
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor

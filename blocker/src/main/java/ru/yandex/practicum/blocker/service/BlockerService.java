@@ -6,7 +6,6 @@ import ru.yandex.practicum.blocker.dto.OperationCheckRequest;
 import ru.yandex.practicum.blocker.dto.OperationCheckResponse;
 
 import java.math.BigDecimal;
-import java.time.LocalTime;
 
 @Service
 @Slf4j

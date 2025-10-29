@@ -15,8 +15,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
-import ru.yandex.practicum.accounts.configuration.TestContainersConfiguration;
 import ru.yandex.practicum.accounts.configuration.RsaKeyProperties;
+import ru.yandex.practicum.accounts.configuration.TestContainersConfiguration;
 import ru.yandex.practicum.accounts.dto.UpdatePasswordRequest;
 import ru.yandex.practicum.accounts.dto.UpdateUserInfoRequest;
 import ru.yandex.practicum.accounts.service.NotificationsClient;
@@ -26,7 +26,8 @@ import java.time.LocalDate;
 import java.util.Date;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
