@@ -7,7 +7,7 @@ replicaCount: 1
 
 service:
   type: ClusterIP
-  port: 8086
+  port: 8080
 
 resources:
   requests:
@@ -16,5 +16,3 @@ resources:
   limits:
     memory: "256Mi"
     cpu: "200m"
-
-env: []

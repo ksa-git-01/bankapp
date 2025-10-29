@@ -7,7 +7,7 @@ replicaCount: 1
 
 service:
   type: ClusterIP
-  port: 8085
+  port: 8080
 
 resources:
   requests:
@@ -17,4 +17,6 @@ resources:
     memory: "256Mi"
     cpu: "200m"
 
-env: []
+keycloak:
+  client:
+    secret: GENERATOR-client-secret-123456

@@ -22,5 +22,8 @@ spec:
             - name: http
               containerPort: {{ .Values.service.port }}
               protocol: TCP
+          env:
+            - name: GENERATOR_CLIENT_SECRET
+              value: {{ .Values.keycloak.client.secret | quote }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
