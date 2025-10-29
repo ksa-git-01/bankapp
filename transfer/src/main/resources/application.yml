@@ -10,9 +10,9 @@ spring:
         registration:
           keycloak:
             client-id: transfer-client
-            client-secret: TRANSFER-client-secret-123456
+            client-secret: ${TRANSFER_CLIENT_SECRET}
             authorization-grant-type: client_credentials
-            scope: accounts-access,notifications-access
+            scope: openid
         provider:
           keycloak:
             token-uri: http://bankapp-keycloak:8080/realms/bankapp/protocol/openid-connect/token
