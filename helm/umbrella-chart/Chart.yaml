@@ -1,6 +1,6 @@
 apiVersion: v2
-name: microservices-app
-description: Umbrella chart for microservices application
+name: bankapp
+description: Umbrella chart for bankapp application
 type: application
 version: 0.1.0
 appVersion: "1.0"
