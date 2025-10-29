@@ -13,12 +13,14 @@ import ru.yandex.practicum.exchange.generator.dto.RatesRequest;
 public class ExchangeClient {
     private final RestTemplate restTemplate;
 
+    private static final String EXCHANGE_URL = "http://bankapp-exchange";
+
     public void createRate(RatesRequest request) {
         log.debug("Filling rates in Exchange service");
 
         try {
             ResponseEntity<Void> response = restTemplate.postForEntity(
-                    "/exchange/api/rates",
+                    EXCHANGE_URL + "/api/rates",
                     request,
                     Void.class
             );

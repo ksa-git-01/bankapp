@@ -1,7 +1,6 @@
 package ru.yandex.practicum.exchange.generator.configuration;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
@@ -14,9 +13,6 @@ import org.springframework.web.client.RestTemplate;
 @Configuration
 @Slf4j
 public class OAuth2RestTemplateConfig {
-
-    @Value("${gateway.url}")
-    private String gatewayUrl;
 
     @Bean
     @LoadBalanced
@@ -31,7 +27,6 @@ public class OAuth2RestTemplateConfig {
                 new OAuth2ClientHttpRequestInterceptor(authorizedClientManager);
 
         return new RestTemplateBuilder()
-                .rootUri(gatewayUrl)
                 .additionalInterceptors(interceptor)
                 .build();
     }

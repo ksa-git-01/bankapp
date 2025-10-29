@@ -1,15 +1,6 @@
 spring:
   application:
     name: generator
-  config:
-    import: "optional:consul:"
-  cloud:
-    consul:
-      host: ${SPRING_CLOUD_CONSUL_HOST:localhost}
-      port: ${SPRING_CLOUD_CONSUL_PORT:8500}
-      discovery:
-        enabled: true
-        service-name: ${spring.application.name}
   security:
     oauth2:
       client:
@@ -31,14 +22,8 @@ management:
     health:
       show-details: always
 
-gateway:
-  url: http://gateway
-
 server:
-  port: 8088
-
-rsa:
-  public-key: classpath:certs/public.pem
+  port: 8080
 
 jwt:
   expiration: 3600000
