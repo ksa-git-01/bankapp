@@ -23,6 +23,10 @@ data:
             {
               "name": "transfer-access",
               "description": "Access to transfer service"
+            },
+            {
+              "name": "exchange-access",
+              "description": "Access to exchange service"
             }
           ],
           "cash-client": [
@@ -97,7 +101,7 @@ data:
               }
             }
           ],
-          "defaultClientScopes": ["accounts-access", "cash-access", "transfer-access"]
+          "defaultClientScopes": ["accounts-access", "cash-access", "transfer-access", "exchange-access"]
         },
         {
           "clientId": "cash-client",
@@ -278,7 +282,7 @@ data:
           "enabled": true,
           "serviceAccountClientId": "frontui-client",
           "clientRoles": {
-            "frontui-client": ["accounts-access", "cash-access", "transfer-access"]
+            "frontui-client": ["accounts-access", "cash-access", "transfer-access", "exchange-access"]
           }
         },
         {
