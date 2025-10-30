@@ -18,11 +18,11 @@ import java.time.LocalDateTime;
 public class ExchangeHistory {
     @Id
     private Long id;
-    private Long userId;
+    private Long userIdFrom;
     private String currencyFrom;
     private BigDecimal amountFrom;
+    private Long userIdTo;
     private String currencyTo;
     private BigDecimal amountTo;
-    private BigDecimal ratio;
     private LocalDateTime createdAt;
 }

@@ -1,6 +1,7 @@
 package ru.yandex.practicum.exchange.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.exchange.dto.RatesRequest;
@@ -12,16 +13,18 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/rates")
 @RequiredArgsConstructor
+@Slf4j
 public class RatesController {
     private final RateService rateService;
 
     @PostMapping
-    public ResponseEntity<Void> createRate(@RequestBody RatesRequest request){
+    public ResponseEntity<?> createRate(@RequestBody RatesRequest request){
         try {
             rateService.createRate(request.currencyFrom(), request.currencyTo(), request.ratio());
             return ResponseEntity.ok().build();
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
+            log.debug("createRate: {}", e.getMessage());
+            return ResponseEntity.internalServerError().body(e.getMessage());
         }
     }
 
