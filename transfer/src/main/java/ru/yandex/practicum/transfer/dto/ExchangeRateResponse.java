@@ -1,6 +1,6 @@
 package ru.yandex.practicum.transfer.dto;
 
-import java.util.List;
+import java.math.BigDecimal;
 
-public record ExchangeRateResponse(List<ExchangeRate> exchangeRates) {
+public record ExchangeRateResponse(String currencyFrom, String currencyTo, BigDecimal ratio) {
 }

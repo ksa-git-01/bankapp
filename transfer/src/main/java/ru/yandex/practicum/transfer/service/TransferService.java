@@ -7,6 +7,7 @@ import ru.yandex.practicum.transfer.dto.*;
 import ru.yandex.practicum.transfer.exception.TransferException;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -17,7 +18,7 @@ public class TransferService {
     private final NotificationsClient notificationsClient;
     private final ExchangeClient exchangeClient;
 
-    private static String RUB = "RUB";
+    private static final String RUB = "RUB";
 
     public TransferResponse transfer(TransferRequest request) {
         log.debug("Processing transfer: from user {} to user {}, amount {} {}",
@@ -29,31 +30,31 @@ public class TransferService {
         // Конвертация валюты
         if (!request.fromCurrency().equals(request.toCurrency())) {
             try {
-                ExchangeRateResponse response = exchangeClient.getRates();
+                List<ExchangeRateResponse> response = exchangeClient.getRates();
 
                 // Если одна из валют RUB - прямая конвертация
                 if (request.fromCurrency().equals(RUB) || request.toCurrency().equals(RUB)) {
-                    BigDecimal ratio = response.exchangeRates().stream()
+                    BigDecimal ratio = response.stream()
                             .filter(exchangeRate -> exchangeRate.currencyFrom().equals(request.fromCurrency())
                                     && exchangeRate.currencyTo().equals(request.toCurrency()))
-                            .map(ExchangeRate::ratio)
+                            .map(ExchangeRateResponse::ratio)
                             .findFirst()
                             .orElse(BigDecimal.ONE);
 
                     convertedAmount = request.amount().multiply(ratio);
                 } else {
                     // Конвертация через RUB: fromCurrency -> RUB -> toCurrency
-                    BigDecimal ratioToRub = response.exchangeRates().stream()
+                    BigDecimal ratioToRub = response.stream()
                             .filter(exchangeRate -> exchangeRate.currencyFrom().equals(request.fromCurrency())
                                     && exchangeRate.currencyTo().equals(RUB))
-                            .map(ExchangeRate::ratio)
+                            .map(ExchangeRateResponse::ratio)
                             .findFirst()
                             .orElse(BigDecimal.ONE);
 
-                    BigDecimal ratioFromRub = response.exchangeRates().stream()
+                    BigDecimal ratioFromRub = response.stream()
                             .filter(exchangeRate -> exchangeRate.currencyFrom().equals(RUB)
                                     && exchangeRate.currencyTo().equals(request.toCurrency()))
-                            .map(ExchangeRate::ratio)
+                            .map(ExchangeRateResponse::ratio)
                             .findFirst()
                             .orElse(BigDecimal.ONE);
 

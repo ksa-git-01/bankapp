@@ -2,12 +2,16 @@ package ru.yandex.practicum.transfer.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import ru.yandex.practicum.transfer.dto.ExchangeHistoryRequest;
 import ru.yandex.practicum.transfer.dto.ExchangeRateResponse;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -18,13 +22,16 @@ public class ExchangeClient {
 
     private static final String EXCHANGE_URL = "http://bankapp-exchange:8080";
 
-    public ExchangeRateResponse getRates() {
+    public List<ExchangeRateResponse> getRates() {
         log.debug("Getting rates");
 
         try {
-            ResponseEntity<ExchangeRateResponse> response = restTemplate.getForEntity(
+            ResponseEntity<List<ExchangeRateResponse>> response = restTemplate.exchange(
                     EXCHANGE_URL + "/api/rates",
-                    ExchangeRateResponse.class
+                    HttpMethod.GET,
+                    null,
+                    new ParameterizedTypeReference<>() {
+                    }
             );
 
             return response.getBody();
@@ -44,8 +51,8 @@ public class ExchangeClient {
                     request,
                     Void.class
             );
-        } catch (HttpClientErrorException e) {
-            log.error("Creating conversion history record: {}", e.getResponseBodyAsString());
+        } catch (Exception e) {
+            log.error("Creating conversion history record: {}", e.getMessage());
             throw new RuntimeException("Ошибка записи истории трансфера: " + e.getMessage());
         }
     }
