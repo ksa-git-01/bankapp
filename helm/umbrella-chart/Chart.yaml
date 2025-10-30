@@ -36,3 +36,9 @@ dependencies:
   - name: transfer
     version: 0.1.0
     repository: "file://./charts/transfer"
+  - name: postgresql-keycloak
+    version: 0.1.0
+    repository: "file://./charts/postgresql-keycloak"
+  - name: keycloak
+    version: 0.1.0
+    repository: "file://./charts/keycloak"

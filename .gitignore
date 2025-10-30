@@ -30,3 +30,4 @@ replay_pid*
 *.ipr
 /helm/umbrella-chart/test-output.yaml
 *.tgz
+*.lock

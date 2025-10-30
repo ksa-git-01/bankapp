@@ -1,0 +1,28 @@
+image:
+  repository: postgres
+  tag: "16-alpine"
+  pullPolicy: IfNotPresent
+
+resources:
+  requests:
+    memory: "256Mi"
+    cpu: "250m"
+  limits:
+    memory: "512Mi"
+    cpu: "500m"
+
+persistence:
+  enabled: true
+  storageClass: "standard"
+  size: "1Gi"
+
+auth:
+  database: "keycloak"
+  username: "keycloak_user"
+  password: "keycloak_password"
+  postgresPassword: "postgres_password"
+
+service:
+  port: 5432
+
+env: []

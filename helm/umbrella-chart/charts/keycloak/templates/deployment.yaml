@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "keycloak.fullname" . }}
+  labels:
+    {{- include "keycloak.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "keycloak.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "keycloak.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: keycloak
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          args:
+            - start-dev
+            - --import-realm
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          env:
+            - name: KEYCLOAK_ADMIN
+              value: {{ .Values.admin.username | quote }}
+            - name: KEYCLOAK_ADMIN_PASSWORD
+              value: {{ .Values.admin.password | quote }}
+            - name: KC_DB
+              value: "postgres"
+            - name: KC_DB_URL
+              value: "jdbc:postgresql://{{ .Values.database.host }}:{{ .Values.database.port }}/{{ .Values.database.name }}"
+            - name: KC_DB_USERNAME
+              value: {{ .Values.database.user | quote }}
+            - name: KC_DB_PASSWORD
+              value: {{ .Values.database.password | quote }}
+            - name: FRONTUI_CLIENT_SECRET
+              value: {{ .Values.clients.frontui.secret | quote }}
+            - name: ACCOUNTS_CLIENT_SECRET
+              value: {{ .Values.clients.accounts.secret | quote }}
+            - name: CASH_CLIENT_SECRET
+              value: {{ .Values.clients.cash.secret | quote }}
+            - name: TRANSFER_CLIENT_SECRET
+              value: {{ .Values.clients.transfer.secret | quote }}
+            - name: GENERATOR_CLIENT_SECRET
+              value: {{ .Values.clients.generator.secret | quote }}
+          volumeMounts:
+            - name: realm-config
+              mountPath: /opt/keycloak/data/import
+              readOnly: true
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          livenessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 120
+            periodSeconds: 10
+          readinessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 90
+            periodSeconds: 5
+      volumes:
+        - name: realm-config
+          configMap:
+            name: {{ include "keycloak.fullname" . }}-realm

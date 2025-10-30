@@ -1,0 +1,44 @@
+image:
+  repository: quay.io/keycloak/keycloak
+  tag: "25.0.6"
+  pullPolicy: IfNotPresent
+
+replicaCount: 1
+
+service:
+  type: ClusterIP
+  port: 8080
+
+resources:
+  requests:
+    memory: "512Mi"
+    cpu: "500m"
+  limits:
+    memory: "1Gi"
+    cpu: "1000m"
+
+admin:
+  username: admin
+  password: admin
+
+database:
+  host: bankapp-postgresql-keycloak
+  port: 5432
+  name: keycloak
+  user: keycloak_user
+  password: keycloak_password
+
+clients:
+  frontui:
+    secret: FRONTUI-client-secret-123456
+  accounts:
+    secret: ACCOUNTS-client-secret-123456
+  cash:
+    secret: CASH-client-secret-123456
+  transfer:
+    secret: TRANSFER-client-secret-123456
+  generator:
+    secret: GENERATOR-client-secret-123456
+
+realm:
+  import: true
