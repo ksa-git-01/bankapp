@@ -21,9 +21,9 @@ persistence:
 
 # Учётные данные БД
 auth:
-  database: "accounts_db"
-  username: "accounts_user"
-  password: "accounts_password"
+  database: "exchange_db"
+  username: "exchange_user"
+  password: "exchange_password"
   postgresPassword: "postgres_password"
 
 # Порт
