@@ -14,7 +14,7 @@ public class NotificationsClient {
 
     private final RestTemplate restTemplate;
 
-    private static final String NOTIFICATIONS_URL = "http://bankapp-notifications";
+    private static final String NOTIFICATIONS_URL = "http://bankapp-notifications:8080";
 
     public void sendNotification(Long userId, String type, String message) {
         log.debug("Sending notification to user {}: {}", userId, type);

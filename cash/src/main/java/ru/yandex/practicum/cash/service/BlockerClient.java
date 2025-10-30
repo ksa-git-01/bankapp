@@ -15,7 +15,7 @@ public class BlockerClient {
 
     private final RestTemplate restTemplate;
 
-    private static final String BLOCKER_URL = "http://bankapp-blocker";
+    private static final String BLOCKER_URL = "http://bankapp-blocker:8080";
 
     public boolean checkOperation(CashOperationRequest request) {
         log.debug("Checking operation with Blocker service");

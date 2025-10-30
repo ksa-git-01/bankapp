@@ -18,7 +18,7 @@ public class CashClient {
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    private static final String CASH_URL = "http://bankapp-cash";
+    private static final String CASH_URL = "http://bankapp-cash:8080";
 
     public void processCashOperation(Long userId, String operation, String currency, Double amount) {
         log.debug("Processing cash operation: user={}, operation={}, currency={}, amount={}",

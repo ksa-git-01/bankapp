@@ -18,7 +18,7 @@ public class AccountsClient {
 
     private final RestTemplate restTemplate;
 
-    private static final String ACCOUNTS_URL = "http://bankapp-accounts";
+    private static final String ACCOUNTS_URL = "http://bankapp-accounts:8080";
 
     public BigDecimal deposit(Long userId, String currency, BigDecimal amount) {
         log.debug("Depositing {} {} to user {}", amount, currency, userId);

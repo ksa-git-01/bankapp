@@ -18,7 +18,7 @@ public class TransferClient {
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    private static final String TRANSFER_URL = "http://bankapp-transfer";
+    private static final String TRANSFER_URL = "http://bankapp-transfer:8080";
 
     public void transfer(Long fromUserId, Long toUserId,
                          String fromCurrency, String toCurrency,

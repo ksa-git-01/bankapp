@@ -16,7 +16,7 @@ public class ExchangeClient {
 
     private final RestTemplate restTemplate;
 
-    private static final String EXCHANGE_URL = "http://bankapp-exchange";
+    private static final String EXCHANGE_URL = "http://bankapp-exchange:8080";
 
     public ExchangeRateResponse getRates() {
         log.debug("Getting rates");

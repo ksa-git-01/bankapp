@@ -24,7 +24,7 @@ public class AccountsClient {
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
 
-    private static final String ACCOUNTS_URL = "http://bankapp-accounts";
+    private static final String ACCOUNTS_URL = "http://bankapp-accounts:8080";
 
     public void registerUser(RegistrationRequest request) {
         log.debug("Registering user via accounts service: {}", request.login());
@@ -50,7 +50,7 @@ public class AccountsClient {
 
         try {
             ResponseEntity<UserInfoResponse> response = restTemplate.getForEntity(
-                    ACCOUNTS_URL + "/accounts/api/users/id/" + userId,
+                    ACCOUNTS_URL + "/api/users/id/" + userId,
                     UserInfoResponse.class
             );
 
