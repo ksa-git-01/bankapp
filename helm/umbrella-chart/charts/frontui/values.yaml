@@ -16,7 +16,3 @@ resources:
   limits:
     memory: "512Mi"
     cpu: "500m"
-
-keycloak:
-  client:
-    secret: FRONTUI-client-secret-123456

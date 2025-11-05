@@ -34,7 +34,10 @@ spec:
             - name: SPRING_DATASOURCE_PASSWORD
               value: {{ .Values.database.password | quote }}
             - name: ACCOUNTS_CLIENT_SECRET
-              value: {{ .Values.keycloak.client.secret | quote }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "accounts.fullname" . }}-keycloak
+                  key: client-secret
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           livenessProbe:

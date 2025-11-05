@@ -73,7 +73,7 @@ docker build -t transfer:latest -f transfer/Dockerfile .
 ```
 cd helm/umbrella-chart
 
-helm install bankapp . -n test
+helm install bankapp . -n test --set accounts.keycloak.client.secretValue=ACCOUNTS-client-secret-123456 --set cash.keycloak.client.secretValue=CASH-client-secret-123456 --set frontui.keycloak.client.secretValue=FRONTUI-client-secret-123456 --set generator.keycloak.client.secretValue=GENERATOR-client-secret-123456 --set transfer.keycloak.client.secretValue=TRANSFER-client-secret-123456
 # или
 helm install bankapp . -n prod
 

@@ -23,7 +23,3 @@ database:
   name: accounts_db
   user: accounts_user
   password: accounts_password
-
-keycloak:
-  client:
-    secret: ACCOUNTS-client-secret-123456
