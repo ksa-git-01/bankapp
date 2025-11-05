@@ -1,9 +1,11 @@
 package ru.yandex.practicum.frontui.configuration;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -18,6 +20,7 @@ import org.springframework.web.client.RestTemplate;
 public class OAuth2RestTemplateConfig {
 
     @Bean
+    @Primary
     public RestTemplate restTemplate(
             OAuth2AuthorizedClientManager authorizedClientManager) {
 
@@ -29,6 +32,12 @@ public class OAuth2RestTemplateConfig {
         );
 
         return restTemplate;
+    }
+
+    @Bean
+    @Qualifier("simpleRestTemplate")
+    public RestTemplate simpleRestTemplate() {
+        return new RestTemplate();
     }
 
     private ClientHttpRequestInterceptor dualTokenInterceptor(

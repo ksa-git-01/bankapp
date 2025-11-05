@@ -2,6 +2,7 @@ package ru.yandex.practicum.frontui.configuration;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,16 +19,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
-@RequiredArgsConstructor
 @Slf4j
 public class RemoteAuthenticationProvider implements AuthenticationProvider {
+    private final RestTemplate simpleRestTemplate;
     private static final String ACCOUNTS_URL = "http://bankapp-accounts:8080";
+
+    public RemoteAuthenticationProvider(@Qualifier("simpleRestTemplate") RestTemplate restTemplate) {
+        this.simpleRestTemplate = restTemplate;
+    }
 
     @Override
     public Authentication authenticate(Authentication authentication)
             throws AuthenticationException {
-        RestTemplate simpleRestTemplate = new RestTemplate();
-
         String username = authentication.getName();
         String password = authentication.getCredentials().toString();
 
