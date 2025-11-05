@@ -17,8 +17,7 @@ public class TransferService {
     private final AccountsClient accountsClient;
     private final NotificationsClient notificationsClient;
     private final ExchangeClient exchangeClient;
-
-    private static final String RUB = "RUB";
+    private final CurrencyConverter currencyConverter;
 
     public TransferResponse transfer(TransferRequest request) {
         log.debug("Processing transfer: from user {} to user {}, amount {} {}",
@@ -29,41 +28,11 @@ public class TransferService {
 
         // Конвертация валюты
         if (!request.fromCurrency().equals(request.toCurrency())) {
-            try {
-                List<ExchangeRateResponse> response = exchangeClient.getRates();
-
-                // Если одна из валют RUB - прямая конвертация
-                if (request.fromCurrency().equals(RUB) || request.toCurrency().equals(RUB)) {
-                    BigDecimal ratio = response.stream()
-                            .filter(exchangeRate -> exchangeRate.currencyFrom().equals(request.fromCurrency())
-                                    && exchangeRate.currencyTo().equals(request.toCurrency()))
-                            .map(ExchangeRateResponse::ratio)
-                            .findFirst()
-                            .orElse(BigDecimal.ONE);
-
-                    convertedAmount = request.amount().multiply(ratio);
-                } else {
-                    // Конвертация через RUB: fromCurrency -> RUB -> toCurrency
-                    BigDecimal ratioToRub = response.stream()
-                            .filter(exchangeRate -> exchangeRate.currencyFrom().equals(request.fromCurrency())
-                                    && exchangeRate.currencyTo().equals(RUB))
-                            .map(ExchangeRateResponse::ratio)
-                            .findFirst()
-                            .orElse(BigDecimal.ONE);
-
-                    BigDecimal ratioFromRub = response.stream()
-                            .filter(exchangeRate -> exchangeRate.currencyFrom().equals(RUB)
-                                    && exchangeRate.currencyTo().equals(request.toCurrency()))
-                            .map(ExchangeRateResponse::ratio)
-                            .findFirst()
-                            .orElse(BigDecimal.ONE);
-
-                    convertedAmount = request.amount().multiply(ratioToRub).multiply(ratioFromRub);
-                }
-            } catch (Exception e) {
-                log.error("Failed to get exchange rates", e);
-                throw new TransferException("Transfer failed: " + e.getMessage());
-            }
+            convertedAmount = currencyConverter.convertAmount(
+                    request.fromCurrency(),
+                    request.toCurrency(),
+                    request.amount()
+                    );
         }
 
         try {
