@@ -24,12 +24,14 @@ public class AccountsClient {
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
 
+    private static final String ACCOUNTS_URL = "http://bankapp-accounts:8080";
+
     public void registerUser(RegistrationRequest request) {
         log.debug("Registering user via accounts service: {}", request.login());
 
         try {
             ResponseEntity<RegistrationResponse> response = restTemplate.postForEntity(
-                    "/accounts/api/registration",
+                    ACCOUNTS_URL + "/api/registration",
                     request,
                     RegistrationResponse.class
             );
@@ -48,7 +50,7 @@ public class AccountsClient {
 
         try {
             ResponseEntity<UserInfoResponse> response = restTemplate.getForEntity(
-                    "/accounts/api/users/id/" + userId,
+                    ACCOUNTS_URL + "/api/users/id/" + userId,
                     UserInfoResponse.class
             );
 
@@ -64,7 +66,7 @@ public class AccountsClient {
 
         try {
             ResponseEntity<UserInfoResponse> response = restTemplate.getForEntity(
-                    "/accounts/api/users/username/" + username,
+                    ACCOUNTS_URL + "/api/users/username/" + username,
                     UserInfoResponse.class
             );
 
@@ -80,7 +82,7 @@ public class AccountsClient {
 
         try {
             restTemplate.put(
-                    "/accounts/api/users/" + userId + "/password",
+                    ACCOUNTS_URL + "/api/users/" + userId + "/password",
                     request
             );
 
@@ -97,7 +99,7 @@ public class AccountsClient {
 
         try {
             ResponseEntity<UserInfoResponse> response = restTemplate.exchange(
-                    "/accounts/api/users/" + userId,
+                    ACCOUNTS_URL + "/api/users/" + userId,
                     HttpMethod.PUT,
                     new org.springframework.http.HttpEntity<>(request),
                     UserInfoResponse.class
@@ -117,7 +119,7 @@ public class AccountsClient {
 
         try {
             ResponseEntity<List<AccountDto>> response = restTemplate.exchange(
-                    "/accounts/api/accounts/user/" + userId,
+                    ACCOUNTS_URL + "/api/accounts/user/" + userId,
                     HttpMethod.GET,
                     null,
                     new ParameterizedTypeReference<>() {
@@ -139,7 +141,7 @@ public class AccountsClient {
 
         try {
             ResponseEntity<AccountDto> response = restTemplate.postForEntity(
-                    "/accounts/api/accounts",
+                    ACCOUNTS_URL + "/api/accounts",
                     request,
                     AccountDto.class
             );
@@ -157,7 +159,7 @@ public class AccountsClient {
         log.debug("Deleting account: userId={}, currency={}", userId, currency);
 
         try {
-            restTemplate.delete("/accounts/api/accounts/user/" + userId + "/currency/" + currency);
+            restTemplate.delete(ACCOUNTS_URL + "/api/accounts/user/" + userId + "/currency/" + currency);
             log.debug("Account deleted successfully");
 
         } catch (HttpClientErrorException e) {
@@ -171,7 +173,7 @@ public class AccountsClient {
 
         try {
             ResponseEntity<List<UserListDto>> response = restTemplate.exchange(
-                    "/accounts/api/users",
+                    ACCOUNTS_URL + "/api/users",
                     HttpMethod.GET,
                     null,
                     new ParameterizedTypeReference<>() {

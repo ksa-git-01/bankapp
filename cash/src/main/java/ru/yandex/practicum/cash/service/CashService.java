@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.cash.dto.CashOperationRequest;
 import ru.yandex.practicum.cash.dto.CashOperationResponse;
 
+import java.math.BigDecimal;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -34,7 +36,7 @@ public class CashService {
             }
 
             // 2. Выполнить операцию в Accounts
-            Double newBalance;
+            BigDecimal newBalance;
             String notificationType;
             String notificationMessage;
 

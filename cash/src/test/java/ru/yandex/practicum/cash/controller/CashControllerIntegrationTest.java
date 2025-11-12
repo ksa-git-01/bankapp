@@ -21,6 +21,7 @@ import ru.yandex.practicum.cash.dto.CashOperationResponse;
 import ru.yandex.practicum.cash.exception.OperationBlockedException;
 import ru.yandex.practicum.cash.service.CashService;
 
+import java.math.BigDecimal;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.interfaces.RSAPrivateKey;
@@ -75,8 +76,8 @@ class CashControllerIntegrationTest {
 
     @Test
     void cashOperationSuccess() throws Exception {
-        CashOperationRequest request = new CashOperationRequest(1L, "DEPOSIT", "RUB", 1000.0);
-        CashOperationResponse response = new CashOperationResponse(true, "Operation completed successfully", 5000.0);
+        CashOperationRequest request = new CashOperationRequest(1L, "DEPOSIT", "RUB", BigDecimal.valueOf(1000.0));
+        CashOperationResponse response = new CashOperationResponse(true, "Operation completed successfully", BigDecimal.valueOf(5000.0));
 
         when(cashService.processCashOperation(any(CashOperationRequest.class))).thenReturn(response);
 
@@ -95,7 +96,7 @@ class CashControllerIntegrationTest {
 
     @Test
     void cashOperationWithoutOAuth2Token() throws Exception {
-        CashOperationRequest request = new CashOperationRequest(1L, "DEPOSIT", "RUB", 1000.0);
+        CashOperationRequest request = new CashOperationRequest(1L, "DEPOSIT", "RUB", BigDecimal.valueOf(1000.0));
 
         mockMvc.perform(post("/api/cash/operation")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -106,7 +107,7 @@ class CashControllerIntegrationTest {
 
     @Test
     void cashOperationWithoutUserJwtToken() throws Exception {
-        CashOperationRequest request = new CashOperationRequest(1L, "DEPOSIT", "RUB", 1000.0);
+        CashOperationRequest request = new CashOperationRequest(1L, "DEPOSIT", "RUB", BigDecimal.valueOf(1000.0));
 
         mockMvc.perform(post("/api/cash/operation")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -121,7 +122,7 @@ class CashControllerIntegrationTest {
 
     @Test
     void cashOperationWhenUserIdMismatch() throws Exception {
-        CashOperationRequest request = new CashOperationRequest(2L, "DEPOSIT", "RUB", 1000.0);
+        CashOperationRequest request = new CashOperationRequest(2L, "DEPOSIT", "RUB", BigDecimal.valueOf(1000.0));
         String anotherUserJwt = generateUserJwt(1L);
 
         mockMvc.perform(post("/api/cash/operation")
@@ -138,7 +139,7 @@ class CashControllerIntegrationTest {
 
     @Test
     void cashOperationWithoutRequiredRole() throws Exception {
-        CashOperationRequest request = new CashOperationRequest(1L, "DEPOSIT", "RUB", 1000.0);
+        CashOperationRequest request = new CashOperationRequest(1L, "DEPOSIT", "RUB", BigDecimal.valueOf(1000.0));
 
         mockMvc.perform(post("/api/cash/operation")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -152,7 +153,7 @@ class CashControllerIntegrationTest {
 
     @Test
     void cashOperationWhenOperationBlocked() throws Exception {
-        CashOperationRequest request = new CashOperationRequest(1L, "WITHDRAW", "RUB", 200000.0);
+        CashOperationRequest request = new CashOperationRequest(1L, "WITHDRAW", "RUB", BigDecimal.valueOf(200000.0));
 
         when(cashService.processCashOperation(any(CashOperationRequest.class)))
                 .thenThrow(new OperationBlockedException("Operation blocked due to suspicious activity"));

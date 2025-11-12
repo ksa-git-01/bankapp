@@ -14,12 +14,13 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
-import ru.yandex.practicum.accounts.configuration.TestContainersConfiguration;
 import ru.yandex.practicum.accounts.configuration.RsaKeyProperties;
+import ru.yandex.practicum.accounts.configuration.TestContainersConfiguration;
 import ru.yandex.practicum.accounts.dto.CreateAccountRequest;
 import ru.yandex.practicum.accounts.dto.DepositRequest;
 import ru.yandex.practicum.accounts.dto.WithdrawRequest;
 
+import java.math.BigDecimal;
 import java.security.interfaces.RSAPrivateKey;
 import java.util.Date;
 
@@ -102,7 +103,7 @@ class AccountControllerIntegrationTest {
 
     @Test
     void depositWithValidDataSuccess() throws Exception {
-        DepositRequest request = new DepositRequest(1L, "RUB", 1000.0);
+        DepositRequest request = new DepositRequest(1L, "RUB", BigDecimal.valueOf(1000.0));
 
         mockMvc.perform(post("/api/accounts/deposit")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -117,7 +118,7 @@ class AccountControllerIntegrationTest {
 
     @Test
     void depositWithNegativeAmount() throws Exception {
-        DepositRequest request = new DepositRequest(1L, "RUB", -100.0);
+        DepositRequest request = new DepositRequest(1L, "RUB", BigDecimal.valueOf(-100));
 
         mockMvc.perform(post("/api/accounts/deposit")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -131,7 +132,7 @@ class AccountControllerIntegrationTest {
 
     @Test
     void withdrawWithValidDataSuccess() throws Exception {
-        WithdrawRequest request = new WithdrawRequest(1L, "RUB", 100.0);
+        WithdrawRequest request = new WithdrawRequest(1L, "RUB", BigDecimal.valueOf(100.0));
 
         mockMvc.perform(post("/api/accounts/withdraw")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -146,7 +147,7 @@ class AccountControllerIntegrationTest {
 
     @Test
     void withdrawWithInsufficientFunds() throws Exception {
-        WithdrawRequest request = new WithdrawRequest(1L, "RUB", 999999.0);
+        WithdrawRequest request = new WithdrawRequest(1L, "RUB", BigDecimal.valueOf(999999.0));
 
         mockMvc.perform(post("/api/accounts/withdraw")
                         .contentType(MediaType.APPLICATION_JSON)

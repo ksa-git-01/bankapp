@@ -1,0 +1,39 @@
+spring:
+  application:
+    name: generator
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            client-id: generator-client
+            client-secret: ${GENERATOR_CLIENT_SECRET}
+            authorization-grant-type: client_credentials
+            scope: openid
+        provider:
+          keycloak:
+            token-uri: http://bankapp-keycloak:8080/realms/bankapp/protocol/openid-connect/token
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always
+
+server:
+  port: 8080
+
+jwt:
+  expiration: 3600000
+
+logging:
+  level:
+    root: INFO
+    ru.yandex.practicum.exchange.generator: DEBUG
+    ru.yandex.practicum.exchange.generator.configuration: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.security.oauth2: DEBUG
+    org.springframework.security.oauth2.jwt: TRACE
+    org.springframework.web.client: DEBUG

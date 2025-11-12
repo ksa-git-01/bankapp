@@ -1,0 +1,25 @@
+image:
+  repository: exchange
+  tag: latest
+  pullPolicy: Never
+
+replicaCount: 1
+
+service:
+  type: ClusterIP
+  port: 8080
+
+resources:
+  requests:
+    memory: "512Mi"
+    cpu: "300m"
+  limits:
+    memory: "1Gi"
+    cpu: "1000m"
+
+database:
+  host: bankapp-postgresql-exchange
+  port: 5432
+  name: exchange_db
+  user: exchange_user
+  password: exchange_password

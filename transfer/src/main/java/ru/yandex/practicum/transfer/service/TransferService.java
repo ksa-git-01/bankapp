@@ -3,9 +3,11 @@ package ru.yandex.practicum.transfer.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.transfer.dto.TransferRequest;
-import ru.yandex.practicum.transfer.dto.TransferResponse;
+import ru.yandex.practicum.transfer.dto.*;
 import ru.yandex.practicum.transfer.exception.TransferException;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -14,15 +16,28 @@ public class TransferService {
 
     private final AccountsClient accountsClient;
     private final NotificationsClient notificationsClient;
+    private final ExchangeClient exchangeClient;
+    private final CurrencyConverter currencyConverter;
 
     public TransferResponse transfer(TransferRequest request) {
         log.debug("Processing transfer: from user {} to user {}, amount {} {}",
                 request.fromUserId(), request.toUserId(),
                 request.amount(), request.fromCurrency());
+        TransferResponse transferResponse;
+        BigDecimal convertedAmount = request.amount();
+
+        // Конвертация валюты
+        if (!request.fromCurrency().equals(request.toCurrency())) {
+            convertedAmount = currencyConverter.convertAmount(
+                    request.fromCurrency(),
+                    request.toCurrency(),
+                    request.amount()
+                    );
+        }
 
         try {
             // Снять со счета отправителя
-            Double fromBalance = accountsClient.withdraw(
+            BigDecimal fromBalance = accountsClient.withdraw(
                     request.fromUserId(),
                     request.fromCurrency(),
                     request.amount()
@@ -32,10 +47,10 @@ public class TransferService {
 
             try {
                 // Пополнить счет получателя
-                Double toBalance = accountsClient.deposit(
+                BigDecimal toBalance = accountsClient.deposit(
                         request.toUserId(),
                         request.toCurrency(),
-                        request.amount()
+                        convertedAmount
                 );
 
                 log.debug("Deposited to receiver. New balance: {}", toBalance);
@@ -43,7 +58,7 @@ public class TransferService {
                 // Отправить уведомления
                 sendNotifications(request);
 
-                return new TransferResponse(
+                transferResponse = new TransferResponse(
                         true,
                         "Transfer completed successfully",
                         fromBalance,
@@ -64,6 +79,27 @@ public class TransferService {
         } catch (Exception e) {
             log.error("Transfer failed", e);
             throw new TransferException("Transfer failed: " + e.getMessage());
+        }
+
+        saveConversionHistory(request, convertedAmount);
+
+        return transferResponse;
+    }
+
+    private void saveConversionHistory(TransferRequest transferRequest, BigDecimal convertedAmount) {
+        try {
+            exchangeClient.createConversionHistory(
+                    new ExchangeHistoryRequest(
+                            transferRequest.fromUserId(),
+                            transferRequest.fromCurrency(),
+                            transferRequest.amount(),
+                            transferRequest.toUserId(),
+                            transferRequest.toCurrency(),
+                            convertedAmount
+                    ));
+        }
+        catch (Exception e) {
+            log.warn("Saving transfer history failed", e);
         }
     }
 

@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}-ingress
+  namespace: {{ .Release.Namespace }}
+spec:
+  ingressClassName: nginx
+  rules:
+    - http:
+        paths:
+          - path: /frontui
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Release.Name }}-frontui
+                port:
+                  number: 8080

@@ -1,7 +1,9 @@
 package ru.yandex.practicum.transfer.dto;
 
+import java.math.BigDecimal;
+
 public record TransferResponse(boolean success,
                                String message,
-                               Double fromBalance,
-                               Double toBalance) {
+                               BigDecimal fromBalance,
+                               BigDecimal toBalance) {
 }

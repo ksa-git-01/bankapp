@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "exchange.fullname" . }}
+  labels:
+    {{- include "exchange.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "exchange.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "exchange.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: exchange
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          env:
+            - name: SPRING_DATASOURCE_HOST
+              value: {{ .Values.database.host | quote }}
+            - name: SPRING_DATASOURCE_PORT
+              value: {{ .Values.database.port | quote }}
+            - name: SPRING_DATASOURCE_NAME
+              value: {{ .Values.database.name | quote }}
+            - name: SPRING_DATASOURCE_USER
+              value: {{ .Values.database.user | quote }}
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: {{ .Values.database.password | quote }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 120
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 90
+            periodSeconds: 5

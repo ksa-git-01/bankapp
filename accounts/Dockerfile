@@ -5,12 +5,13 @@ WORKDIR /app
 # Копируем все pom
 COPY pom.xml .
 COPY accounts/pom.xml ./accounts/
-COPY gateway/pom.xml ./gateway/
 COPY frontui/pom.xml ./frontui/
 COPY cash/pom.xml ./cash/
 COPY blocker/pom.xml ./blocker/
 COPY transfer/pom.xml ./transfer/
 COPY notifications/pom.xml ./notifications/
+COPY exchange/pom.xml ./exchange/
+COPY generator/pom.xml ./generator/
 
 # Скачиваем зависимости
 RUN mvn dependency:go-offline -B

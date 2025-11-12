@@ -10,6 +10,7 @@ import ru.yandex.practicum.accounts.dto.*;
 import ru.yandex.practicum.accounts.exception.ValidationException;
 import ru.yandex.practicum.accounts.service.AccountService;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,7 +61,7 @@ public class AccountController {
                 request.getUserId(), request.getCurrency(), request.getAmount());
 
         try {
-            Double newBalance = accountService.deposit(
+            BigDecimal newBalance = accountService.deposit(
                     request.getUserId(),
                     request.getCurrency(),
                     request.getAmount()
@@ -90,7 +91,7 @@ public class AccountController {
                 request.getUserId(), request.getCurrency(), request.getAmount());
 
         try {
-            Double newBalance = accountService.withdraw(
+            BigDecimal newBalance = accountService.withdraw(
                     request.getUserId(),
                     request.getCurrency(),
                     request.getAmount()

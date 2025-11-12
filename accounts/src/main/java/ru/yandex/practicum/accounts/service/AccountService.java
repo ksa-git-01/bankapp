@@ -10,6 +10,7 @@ import ru.yandex.practicum.accounts.exception.ValidationException;
 import ru.yandex.practicum.accounts.model.Account;
 import ru.yandex.practicum.accounts.repository.AccountRepository;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -49,7 +50,7 @@ public class AccountService {
         Account account = new Account();
         account.setUserId(request.getUserId());
         account.setCurrency(request.getCurrency());
-        account.setBalance(0.0);
+        account.setBalance(BigDecimal.valueOf(0.0));
         account.setCreatedAt(LocalDateTime.now());
         account.setUpdatedAt(LocalDateTime.now());
 
@@ -61,10 +62,10 @@ public class AccountService {
     }
 
     @Transactional
-    public Double deposit(Long userId, String currency, Double amount) {
+    public BigDecimal deposit(Long userId, String currency, BigDecimal amount) {
         log.debug("Deposit: user={}, currency={}, amount={}", userId, currency, amount);
 
-        if (amount <= 0) {
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Сумма должна быть положительной");
         }
 
@@ -73,7 +74,7 @@ public class AccountService {
                         "Счет в валюте " + currency + " не найден"
                 ));
 
-        account.setBalance(account.getBalance() + amount);
+        account.setBalance(account.getBalance().add(amount));
         account.setUpdatedAt(LocalDateTime.now());
 
         Account updated = accountRepository.save(account);
@@ -84,10 +85,10 @@ public class AccountService {
     }
 
     @Transactional
-    public Double withdraw(Long userId, String currency, Double amount) {
+    public BigDecimal withdraw(Long userId, String currency, BigDecimal amount) {
         log.debug("Withdraw: user={}, currency={}, amount={}", userId, currency, amount);
 
-        if (amount <= 0) {
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Сумма должна быть положительной");
         }
 
@@ -96,11 +97,11 @@ public class AccountService {
                         "Счет в валюте " + currency + " не найден"
                 ));
 
-        if (account.getBalance() < amount) {
+        if (account.getBalance().compareTo(amount) < 0) {
             throw new IllegalArgumentException("Недостаточно средств на счете");
         }
 
-        account.setBalance(account.getBalance() - amount);
+        account.setBalance(account.getBalance().subtract(amount));
         account.setUpdatedAt(LocalDateTime.now());
 
         Account updated = accountRepository.save(account);
@@ -119,7 +120,7 @@ public class AccountService {
                         "Счет в валюте " + currency + " не найден"
                 ));
 
-        if (account.getBalance() > 0) {
+        if (account.getBalance().compareTo(BigDecimal.ZERO) > 0) {
             throw new IllegalArgumentException(
                     "Невозможно удалить счет с ненулевым балансом"
             );

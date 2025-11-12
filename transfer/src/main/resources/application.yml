@@ -1,15 +1,6 @@
 spring:
   application:
     name: transfer
-  config:
-    import: "optional:consul:"
-  cloud:
-    consul:
-      host: ${SPRING_CLOUD_CONSUL_HOST:localhost}
-      port: ${SPRING_CLOUD_CONSUL_PORT:8500}
-      discovery:
-        enabled: true
-        service-name: ${spring.application.name}
   security:
     oauth2:
       resourceserver:
@@ -19,9 +10,9 @@ spring:
         registration:
           keycloak:
             client-id: transfer-client
-            client-secret: TRANSFER-client-secret-123456
+            client-secret: ${TRANSFER_CLIENT_SECRET}
             authorization-grant-type: client_credentials
-            scope: accounts-access,notifications-access
+            scope: openid
         provider:
           keycloak:
             token-uri: http://bankapp-keycloak:8080/realms/bankapp/protocol/openid-connect/token
@@ -38,11 +29,8 @@ management:
 rsa:
   public-key: classpath:certs/public.pem
 
-gateway:
-  url: http://gateway
-
 server:
-  port: 8086
+  port: 8080
 
 logging:
   level:

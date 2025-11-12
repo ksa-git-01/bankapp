@@ -1,4 +1,6 @@
 package ru.yandex.practicum.accounts.dto;
 
-public record AccountDto(Long id, String currency, Double balance) {
+import java.math.BigDecimal;
+
+public record AccountDto(Long id, String currency, BigDecimal balance) {
 }

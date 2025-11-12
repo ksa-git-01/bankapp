@@ -1,0 +1,44 @@
+spring:
+  application:
+    name: exchange
+  datasource:
+    url: jdbc:postgresql://${SPRING_DATASOURCE_HOST}:${SPRING_DATASOURCE_PORT}/${SPRING_DATASOURCE_NAME}
+    username: ${SPRING_DATASOURCE_USER}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration
+    baseline-version: 0
+    validate-on-migrate: true
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://bankapp-keycloak:8080/realms/bankapp
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always
+
+server:
+  port: 8080
+
+jwt:
+  expiration: 3600000
+
+logging:
+  level:
+    root: INFO
+    ru.yandex.practicum.exchange: DEBUG
+    ru.yandex.practicum.exchange.configuration: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.security.oauth2: DEBUG
+    org.springframework.security.oauth2.server.resource: TRACE
+    org.springframework.security.oauth2.jwt: TRACE
+    org.springframework.web.client: DEBUG

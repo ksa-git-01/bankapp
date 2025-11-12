@@ -2,6 +2,7 @@ package ru.yandex.practicum.frontui.configuration;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,28 +19,32 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
-@RequiredArgsConstructor
 @Slf4j
 public class RemoteAuthenticationProvider implements AuthenticationProvider {
+    private final RestTemplate simpleRestTemplate;
+    private static final String ACCOUNTS_URL = "http://bankapp-accounts:8080";
 
-    private final RestTemplate restTemplate;
+    public RemoteAuthenticationProvider(@Qualifier("simpleRestTemplate") RestTemplate restTemplate) {
+        this.simpleRestTemplate = restTemplate;
+    }
 
     @Override
     public Authentication authenticate(Authentication authentication)
             throws AuthenticationException {
-
         String username = authentication.getName();
         String password = authentication.getCredentials().toString();
 
         AuthRequest request = new AuthRequest(username, password);
         log.debug("AuthRequest: {}", request);
-        String url = "/accounts/api/auth";
+        String url = ACCOUNTS_URL + "/api/auth";
+        log.debug("ACCOUNTS_URL: {}", ACCOUNTS_URL + "/api/auth");
 
         AuthResponse response;
         try {
-            response = restTemplate.postForObject(url, request, AuthResponse.class);
+            response = simpleRestTemplate.postForObject(url, request, AuthResponse.class);
             log.debug("AuthResponse: {}", response);
         } catch (Exception e) {
+            log.debug("Authentication failed: {}", e.getMessage());
             throw new BadCredentialsException("Authentication failed: " + e.getMessage());
         }
 

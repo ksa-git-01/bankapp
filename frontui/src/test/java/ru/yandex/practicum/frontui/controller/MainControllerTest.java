@@ -12,18 +12,17 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.yandex.practicum.frontui.configuration.RsaKeyProperties;
 import ru.yandex.practicum.frontui.dto.AccountDto;
 import ru.yandex.practicum.frontui.dto.UserInfoResponse;
 import ru.yandex.practicum.frontui.dto.UserListDto;
-import ru.yandex.practicum.frontui.exception.AccountsServiceException;
 import ru.yandex.practicum.frontui.service.AccountsClient;
 import ru.yandex.practicum.frontui.service.CashClient;
 import ru.yandex.practicum.frontui.service.TransferClient;
 
+import java.math.BigDecimal;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.interfaces.RSAPrivateKey;
@@ -32,8 +31,10 @@ import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -86,8 +87,8 @@ class MainControllerTest {
                 1L, "testuser", "Test User", "test@yandex.ru", LocalDate.of(1990, 1, 1), "USER"
         );
         List<AccountDto> accounts = List.of(
-                new AccountDto(1L, "RUB", 1000.0),
-                new AccountDto(2L, "EUR", 500.0)
+                new AccountDto(1L, "RUB", BigDecimal.valueOf(1000.0)),
+                new AccountDto(2L, "EUR", BigDecimal.valueOf(500.0))
         );
         List<UserListDto> users = List.of(
                 new UserListDto(2L, "user2", "Second User")

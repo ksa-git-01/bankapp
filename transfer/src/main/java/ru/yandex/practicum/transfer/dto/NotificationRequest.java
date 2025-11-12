@@ -1,4 +1,6 @@
 package ru.yandex.practicum.transfer.dto;
 
-public record NotificationRequest(Long userId, String type, String message, Double amount, String currency) {
+import java.math.BigDecimal;
+
+public record NotificationRequest(Long userId, String type, String message, BigDecimal amount, String currency) {
 }

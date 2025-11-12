@@ -1,0 +1,109 @@
+pipeline {
+    agent any
+
+    parameters {
+        choice(name: 'ENVIRONMENT', choices: ['test', 'prod'], description: 'Target environment')
+        booleanParam(name: 'VALIDATE_ONLY', defaultValue: false, description: 'Only validate charts without deployment')
+    }
+
+    environment {
+        CHART_NAME = 'umbrella-chart'
+        WORKSPACE_PATH = '/workspace/bankapp'
+        CHART_PATH = "${WORKSPACE_PATH}/helm/umbrella-chart"
+        DOCKER_REGISTRY = 'localhost:5000'
+    }
+
+    stages {
+        stage('Validate Helm Chart') {
+            steps {
+                script {
+                    sh """
+                        helm lint ${CHART_PATH}
+                    """
+                }
+            }
+        }
+
+        stage('Template Validation') {
+            steps {
+                script {
+                    sh """
+                        helm template ${CHART_NAME} ${CHART_PATH} \
+                            --namespace ${params.ENVIRONMENT} \
+                            --set global.image.registry=${DOCKER_REGISTRY} \
+                            --debug
+                    """
+                }
+            }
+        }
+
+        stage('Deploy to Test') {
+            when {
+                allOf {
+                    expression { params.ENVIRONMENT == 'test' }
+                    expression { !params.VALIDATE_ONLY }
+                }
+            }
+            steps {
+                script {
+                    sh """
+                        helm upgrade --install ${CHART_NAME} ${CHART_PATH} \
+                            --namespace test \
+                            --create-namespace \
+                            --set global.image.registry=${DOCKER_REGISTRY} \
+                            --wait \
+                            --timeout 10m
+                    """
+                }
+            }
+        }
+
+        stage('Deploy to Prod') {
+            when {
+                allOf {
+                    expression { params.ENVIRONMENT == 'prod' }
+                    expression { !params.VALIDATE_ONLY }
+                }
+            }
+            steps {
+                input message: 'Deploy to Production?', ok: 'Deploy'
+                script {
+                    sh """
+                        helm upgrade --install ${CHART_NAME} ${CHART_PATH} \
+                            --namespace prod \
+                            --create-namespace \
+                            --set global.image.registry=${DOCKER_REGISTRY} \
+                            --wait \
+                            --timeout 10m
+                    """
+                }
+            }
+        }
+
+        stage('Verify Deployment') {
+            when {
+                expression { !params.VALIDATE_ONLY }
+            }
+            steps {
+                script {
+                    sh """
+                        helm list -n ${params.ENVIRONMENT}
+                        kubectl get pods -n ${params.ENVIRONMENT}
+                    """
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "Umbrella chart pipeline completed successfully"
+        }
+        failure {
+            echo "Umbrella chart pipeline failed"
+        }
+        cleanup {
+            cleanWs()
+        }
+    }
+}

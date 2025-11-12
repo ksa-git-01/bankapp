@@ -28,3 +28,6 @@ replay_pid*
 *.iws
 *.iml
 *.ipr
+/helm/umbrella-chart/test-output.yaml
+*.tgz
+*.lock

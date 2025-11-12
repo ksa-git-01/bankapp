@@ -37,6 +37,6 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 
         response.addCookie(cookie);
 
-        response.sendRedirect("/");
+        response.sendRedirect("/frontui/");
     }
 }

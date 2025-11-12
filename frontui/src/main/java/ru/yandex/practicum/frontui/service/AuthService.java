@@ -14,10 +14,12 @@ public class AuthService {
 
     private final RestTemplate restTemplate;
 
+    private static final String ACCOUNTS_URL = "http://bankapp-accounts:8080";
+
     public AuthResponse authenticate(String username, String password) {
         AuthRequest request = new AuthRequest(username, password);
         log.debug("AuthRequest: {}", request);
-        AuthResponse response = restTemplate.postForObject("/accounts/api/auth", request, AuthResponse.class);
+        AuthResponse response = restTemplate.postForObject(ACCOUNTS_URL + "/api/auth", request, AuthResponse.class);
         log.debug("AuthResponse: {}", response);
         return response;
     }

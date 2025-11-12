@@ -4,12 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import ru.yandex.practicum.frontui.dto.AccountDto;
 
+import java.math.BigDecimal;
+
 @AllArgsConstructor
 @Getter
 public class AccountView {
     private Currency currency;
     private boolean exists;
-    private Double value;
+    private BigDecimal value;
 
     public static AccountView fromDto(AccountDto dto) {
         return new AccountView(
@@ -20,6 +22,6 @@ public class AccountView {
     }
 
     public static AccountView empty(Currency currency) {
-        return new AccountView(currency, false, 0.0);
+        return new AccountView(currency, false, BigDecimal.ZERO);
     }
 }

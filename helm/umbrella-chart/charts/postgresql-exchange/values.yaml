@@ -1,0 +1,34 @@
+# Образ PostgreSQL
+image:
+  repository: postgres
+  tag: "16-alpine"
+  pullPolicy: IfNotPresent
+
+# Ресурсы
+resources:
+  requests:
+    memory: "256Mi"
+    cpu: "250m"
+  limits:
+    memory: "512Mi"
+    cpu: "500m"
+
+# Хранилище
+persistence:
+  enabled: true
+  storageClass: "standard"
+  size: "1Gi"
+
+# Учётные данные БД
+auth:
+  database: "exchange_db"
+  username: "exchange_user"
+  password: "exchange_password"
+  postgresPassword: "postgres_password"
+
+# Порт
+service:
+  port: 5432
+
+# Переменные окружения (дополнительные, если нужны)
+env: []

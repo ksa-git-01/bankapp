@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "frontui.fullname" . }}
+  labels:
+    {{- include "frontui.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "frontui.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "frontui.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: frontui
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          env:
+            - name: FRONTUI_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "frontui.fullname" . }}-keycloak
+                  key: client-secret
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}

@@ -1,0 +1,377 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "keycloak.fullname" . }}-realm
+  labels:
+    {{- include "keycloak.labels" . | nindent 4 }}
+data:
+  bankapp-realm.json: |
+    {
+      "realm": "bankapp",
+      "enabled": true,
+      "roles": {
+        "client": {
+          "frontui-client": [
+            {
+              "name": "accounts-access",
+              "description": "Access to accounts service"
+            },
+            {
+              "name": "cash-access",
+              "description": "Access to cash service"
+            },
+            {
+              "name": "transfer-access",
+              "description": "Access to transfer service"
+            },
+            {
+              "name": "exchange-access",
+              "description": "Access to exchange service"
+            }
+          ],
+          "cash-client": [
+            {
+              "name": "accounts-access",
+              "description": "Access to accounts service"
+            },
+            {
+              "name": "blocker-access",
+              "description": "Access to blocker service"
+            },
+            {
+              "name": "notifications-access",
+              "description": "Access to notifications service"
+            }
+          ],
+          "accounts-client": [
+            {
+              "name": "notifications-access",
+              "description": "Access to notifications service"
+            }
+          ],
+          "transfer-client": [
+            {
+              "name": "accounts-access",
+              "description": "Access to accounts service"
+            },
+            {
+              "name": "notifications-access",
+              "description": "Access to notifications service"
+            },
+            {
+              "name": "exchange-access",
+              "description": "Access to exchange service"
+            }
+          ],
+          "generator-client": [
+            {
+              "name": "exchange-access",
+              "description": "Access to exchange service"
+            }
+          ]
+        }
+      },
+      "clients": [
+        {
+          "clientId": "frontui-client",
+          "name": "FrontUI Application",
+          "enabled": true,
+          "publicClient": false,
+          "protocol": "openid-connect",
+          "standardFlowEnabled": false,
+          "directAccessGrantsEnabled": false,
+          "serviceAccountsEnabled": true,
+          "authorizationServicesEnabled": false,
+          "secret": "FRONTUI-client-secret-123456",
+          "attributes": {
+            "client_credentials.use_refresh_token": "false"
+          },
+          "protocolMappers": [
+            {
+              "name": "client-roles-mapper",
+              "protocol": "openid-connect",
+              "protocolMapper": "oidc-usermodel-client-role-mapper",
+              "consentRequired": false,
+              "config": {
+                "access.token.claim": "true",
+                "claim.name": "resource_access.frontui-client.roles",
+                "jsonType.label": "String",
+                "multivalued": "true",
+                "usermodel.clientRoleMapping.clientId": "frontui-client"
+              }
+            }
+          ],
+          "defaultClientScopes": ["accounts-access", "cash-access", "transfer-access", "exchange-access"]
+        },
+        {
+          "clientId": "cash-client",
+          "name": "Cash Service",
+          "enabled": true,
+          "publicClient": false,
+          "protocol": "openid-connect",
+          "standardFlowEnabled": false,
+          "directAccessGrantsEnabled": false,
+          "serviceAccountsEnabled": true,
+          "authorizationServicesEnabled": false,
+          "secret": "CASH-client-secret-123456",
+          "attributes": {
+            "client_credentials.use_refresh_token": "false"
+          },
+          "protocolMappers": [
+            {
+              "name": "client-roles-mapper",
+              "protocol": "openid-connect",
+              "protocolMapper": "oidc-usermodel-client-role-mapper",
+              "consentRequired": false,
+              "config": {
+                "access.token.claim": "true",
+                "claim.name": "resource_access.cash-client.roles",
+                "jsonType.label": "String",
+                "multivalued": "true",
+                "usermodel.clientRoleMapping.clientId": "cash-client"
+              }
+            }
+          ],
+          "defaultClientScopes": ["accounts-access", "blocker-access", "notifications-access"]
+        },
+        {
+          "clientId": "accounts-client",
+          "name": "Accounts Service",
+          "enabled": true,
+          "publicClient": false,
+          "protocol": "openid-connect",
+          "standardFlowEnabled": false,
+          "directAccessGrantsEnabled": false,
+          "serviceAccountsEnabled": true,
+          "authorizationServicesEnabled": false,
+          "secret": "ACCOUNTS-client-secret-123456",
+          "attributes": {
+            "client_credentials.use_refresh_token": "false"
+          },
+          "protocolMappers": [
+            {
+              "name": "client-roles-mapper",
+              "protocol": "openid-connect",
+              "protocolMapper": "oidc-usermodel-client-role-mapper",
+              "consentRequired": false,
+              "config": {
+                "access.token.claim": "true",
+                "claim.name": "resource_access.accounts-client.roles",
+                "jsonType.label": "String",
+                "multivalued": "true",
+                "usermodel.clientRoleMapping.clientId": "accounts-client"
+              }
+            }
+          ],
+          "defaultClientScopes": ["notifications-access"]
+        },
+        {
+          "clientId": "transfer-client",
+          "name": "Transfer Service",
+          "enabled": true,
+          "publicClient": false,
+          "protocol": "openid-connect",
+          "standardFlowEnabled": false,
+          "directAccessGrantsEnabled": false,
+          "serviceAccountsEnabled": true,
+          "authorizationServicesEnabled": false,
+          "secret": "TRANSFER-client-secret-123456",
+          "attributes": {
+            "client_credentials.use_refresh_token": "false"
+          },
+          "protocolMappers": [
+            {
+              "name": "client-roles-mapper",
+              "protocol": "openid-connect",
+              "protocolMapper": "oidc-usermodel-client-role-mapper",
+              "consentRequired": false,
+              "config": {
+                "access.token.claim": "true",
+                "claim.name": "resource_access.transfer-client.roles",
+                "jsonType.label": "String",
+                "multivalued": "true",
+                "usermodel.clientRoleMapping.clientId": "transfer-client"
+              }
+            }
+          ],
+          "defaultClientScopes": ["accounts-access", "notifications-access", "exchange-access"]
+        },
+        {
+          "clientId": "generator-client",
+          "name": "Rates Generator Application",
+          "enabled": true,
+          "publicClient": false,
+          "protocol": "openid-connect",
+          "standardFlowEnabled": false,
+          "directAccessGrantsEnabled": false,
+          "serviceAccountsEnabled": true,
+          "authorizationServicesEnabled": false,
+          "secret": "GENERATOR-client-secret-123456",
+          "attributes": {
+            "client_credentials.use_refresh_token": "false"
+          },
+          "protocolMappers": [
+            {
+              "name": "client-roles-mapper",
+              "protocol": "openid-connect",
+              "protocolMapper": "oidc-usermodel-client-role-mapper",
+              "consentRequired": false,
+              "config": {
+                "access.token.claim": "true",
+                "claim.name": "resource_access.generator-client.roles",
+                "jsonType.label": "String",
+                "multivalued": "true",
+                "usermodel.clientRoleMapping.clientId": "generator-client"
+              }
+            }
+          ],
+          "defaultClientScopes": ["exchange-access"]
+        },
+        {
+          "clientId": "accounts-service",
+          "name": "Accounts Resource Server",
+          "enabled": true,
+          "publicClient": true,
+          "protocol": "openid-connect",
+          "bearerOnly": true
+        },
+        {
+          "clientId": "cash-service",
+          "name": "Cash Resource Server",
+          "enabled": true,
+          "publicClient": true,
+          "protocol": "openid-connect",
+          "bearerOnly": true
+        },
+        {
+          "clientId": "blocker-service",
+          "name": "Blocker Resource Server",
+          "enabled": true,
+          "publicClient": true,
+          "protocol": "openid-connect",
+          "bearerOnly": true
+        },
+        {
+          "clientId": "notifications-service",
+          "name": "Notifications Resource Server",
+          "enabled": true,
+          "publicClient": true,
+          "protocol": "openid-connect",
+          "bearerOnly": true
+        },
+        {
+          "clientId": "transfer-service",
+          "name": "Transfer Resource Server",
+          "enabled": true,
+          "publicClient": true,
+          "protocol": "openid-connect",
+          "bearerOnly": true
+        },
+        {
+          "clientId": "exchange-service",
+          "name": "Exchange Resource Server",
+          "enabled": true,
+          "publicClient": true,
+          "protocol": "openid-connect",
+          "bearerOnly": true
+        }
+      ],
+      "users": [
+        {
+          "username": "service-account-frontui-client",
+          "enabled": true,
+          "serviceAccountClientId": "frontui-client",
+          "clientRoles": {
+            "frontui-client": ["accounts-access", "cash-access", "transfer-access", "exchange-access"]
+          }
+        },
+        {
+          "username": "service-account-cash-client",
+          "enabled": true,
+          "serviceAccountClientId": "cash-client",
+          "clientRoles": {
+            "cash-client": ["accounts-access", "blocker-access", "notifications-access"]
+          }
+        },
+        {
+          "username": "service-account-accounts-client",
+          "enabled": true,
+          "serviceAccountClientId": "accounts-client",
+          "clientRoles": {
+            "accounts-client": ["notifications-access"]
+          }
+        },
+        {
+          "username": "service-account-transfer-client",
+          "enabled": true,
+          "serviceAccountClientId": "transfer-client",
+          "clientRoles": {
+            "transfer-client": ["accounts-access", "notifications-access", "exchange-access"]
+          }
+        },
+        {
+          "username": "service-account-generator-client",
+          "enabled": true,
+          "serviceAccountClientId": "generator-client",
+          "clientRoles": {
+            "generator-client": ["exchange-access"]
+          }
+        }
+      ],
+      "clientScopes": [
+        {
+          "name": "accounts-access",
+          "description": "Access to Accounts Service",
+          "protocol": "openid-connect",
+          "attributes": {
+            "include.in.token.scope": "true",
+            "display.on.consent.screen": "false"
+          }
+        },
+        {
+          "name": "cash-access",
+          "description": "Access to Cash Service",
+          "protocol": "openid-connect",
+          "attributes": {
+            "include.in.token.scope": "true",
+            "display.on.consent.screen": "false"
+          }
+        },
+        {
+          "name": "blocker-access",
+          "description": "Access to Blocker Service",
+          "protocol": "openid-connect",
+          "attributes": {
+            "include.in.token.scope": "true",
+            "display.on.consent.screen": "false"
+          }
+        },
+        {
+          "name": "notifications-access",
+          "description": "Access to Notifications Service",
+          "protocol": "openid-connect",
+          "attributes": {
+            "include.in.token.scope": "true",
+            "display.on.consent.screen": "false"
+          }
+        },
+        {
+          "name": "transfer-access",
+          "description": "Access to Transfer Service",
+          "protocol": "openid-connect",
+          "attributes": {
+            "include.in.token.scope": "true",
+            "display.on.consent.screen": "false"
+          }
+        },
+        {
+          "name": "exchange-access",
+          "description": "Access to Exchange Service",
+          "protocol": "openid-connect",
+          "attributes": {
+            "include.in.token.scope": "true",
+            "display.on.consent.screen": "false"
+          }
+        }
+      ]
+    }

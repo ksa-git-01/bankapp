@@ -1,4 +1,4 @@
-# Проектная работа 9 спринта
+# Проектная работа 10 спринта
 
 ## Spring Boot приложение BankApp
 
@@ -10,17 +10,22 @@ Spring Boot 3.5.4
 PostgreSQL 16.9
 Maven
 Testcontainers
-Docker & Docker Compose
+Docker
 Keycloak
-Consul
+Minikube
+kubectl
+Helm
 ```
 
 ### Требования к окружению
 
 ```
-Docker Desktop
 JDK 21
 Клонировать репозиторий: https://github.com/ksa-git-01/bankapp.git
+Установлен Docker Desktop
+Установлен kubectl 
+Установлен Minikube
+Установлен Helm 
 ```
 
 ### Запуск тестов
@@ -34,28 +39,83 @@ JDK 21
 Первый запуск может быть долгим, т.к. будут скачаны необходимые образы и зависимости
 
 ### Сборка и запуск
-
-Из корня проекта:
-
+- Запустить Docker Desktop
+- Запустить Minukube:
 ```
-docker-compose up
+minikube delete
+minikube start --cpus=6 --memory=4096 --driver=docker
 ```
+- Включить аддон Ingress
+```
+minikube addons enable ingress
+```
+- Создать неймспейсы
+```
+kubectl create namespace test
+kubectl create namespace prod
+```
+- Переключиться на docker daemon внутри миникуб
+```
+minikube docker-env | Invoke-Expression
+```
+- Из корня проекта собрать образы микросервисов
+```
+docker build -t accounts:latest -f accounts/Dockerfile .
+docker build -t blocker:latest -f blocker/Dockerfile .
+docker build -t cash:latest -f cash/Dockerfile .
+docker build -t exchange:latest -f exchange/Dockerfile .
+docker build -t frontui:latest -f frontui/Dockerfile .
+docker build -t generator:latest -f generator/Dockerfile .
+docker build -t notifications:latest -f notifications/Dockerfile .
+docker build -t transfer:latest -f transfer/Dockerfile .
+```
+- Перейти в каталог с зонтичным хелмчартом и установить его в кластер
+```
+cd helm/umbrella-chart
+
+helm install bankapp . -n test --set accounts.keycloak.client.secretValue=ACCOUNTS-client-secret-123456 --set cash.keycloak.client.secretValue=CASH-client-secret-123456 --set frontui.keycloak.client.secretValue=FRONTUI-client-secret-123456 --set generator.keycloak.client.secretValue=GENERATOR-client-secret-123456 --set transfer.keycloak.client.secretValue=TRANSFER-client-secret-123456
+# или
+helm install bankapp . -n prod
+
+# или обновить, если чарт уже устанавливался ранее 
+helm upgrade bankapp . -n test
+helm upgrade bankapp . -n prod
+```
+Для работы с приложением нужно дождаться полного запуска всех подов, это может занять пару минут
+
+- Если нужен доступ к приложению через браузер хоста, то создать тоннель в отдельном терминале.
+Окно не закрывать
+```
+minikube tunnel
+# после создания тоннеля приложение будет доступно по адресу http://127.0.0.1/frontui/
+```
+- Также в отдельном терминале можно запустить веб-интерфейс миникуба.
+После запуска окно не закрывать:
+```
+minikube dashboard --url
+# в терминале будет выведен временный url веб-интерфейса миникуба 
+```
+- Если хотим перейти в веб-интерфейс кейклока, необходимо в отдельном окне терминала пробросить порт.
+Окно не закрывать
+```
+kubectl port-forward -n test service/bankapp-keycloak 18080:8080
+```
+
+
 
 Используются порты ОС хоста:
-8080..8086 - Сервисы
-15433 - PostgreSQL keycloak
-15432 - PostgreSQL Accounts
-18080 - Веб-интерфейс keycloak
-8500 - Consul 
-
-Первый запуск может быть долгим, т.к. будут скачаны необходимые образы и зависимости
+- 8080..8088 - Сервисы
+- 15433 - PostgreSQL keycloak
+- 15432 - PostgreSQL Accounts
+- 18080 - Веб-интерфейс keycloak
+- 8500 - Consul 
 
 ### Ресурсы проекта
 
 ```
 Веб-страницы:
-Главная страница: http://localhost:8080
-Страница регистрации пользователя: http://localhost:8080/signup
+Главная страница: http://127.0.0.1:8080
+Страница регистрации пользователя: http://127.0.0.1:8080/signup
 
 Публичная информация о реалме keycloak:
 http://localhost:18080/realms/bankapp
@@ -63,14 +123,8 @@ http://localhost:18080/realms/bankapp
 
 ### Схема взаимодействия
 ```
-Все сервисы при старте регистрируются в Consul.
-Все сервисы общаются между собой по HTTP через API-Gateway 
-(spring-cloud-starter-gateway-server-webflux) 
-используя Service Discovery. Для этого в каждом сервисе создан бин RestTemplate с аннотацией 
-@LoadBalanced
-В свойствах каждого проекта прописан базовый путь до Gateway. Далее в каждом клиенте прописаны 
-пути до ручек нужных сервисов с префиксом в виде имени сервиса (Gateway по префиксу роутит на нужный
-сервис также с использованием  Service Discovery (uri вида lb://....))
+Все сервисы общаются между собой по HTTP по имени сервиса через внутренний DNS k8s кластера
+Браузер общается с FrontUI через Ingress Controller 
 ```
 
 ### FLOW аутентификации и авторизации пользователя
@@ -131,14 +185,4 @@ dualTokenInterceptor в конфигурации RestTemplate.
 Этот метод выполняет проверку на наличие валидного токена из кейклока. 
 Если него нет, идет в кейклок за новым, добавляет его в заголовок Authorization 
 и также добавляет заголовок X-User-JWT куда прописывает токен пользователя.
-```
-
-### Примечания по реализации
-
-```
-1. В процессе выполнения задания, его текст изменился. Поэтому я успел сделать 
-сервисы Blocker и Transfer, но не стал делать сервис получения курсов обмена валют. 
-Т.к. в новой версии задания этого не требовалось, а я горел по срокам. 
-Сервис курсов валют реализую в следующем спринте, т.к. вижу что он есть в задании.
-2. Валюты обмениваются по курсу 1 к 1. В появлением сервиса курсов валют это будет доработано.
 ```

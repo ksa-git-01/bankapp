@@ -9,7 +9,7 @@ import org.springframework.web.client.RestTemplate;
 import ru.yandex.practicum.cash.dto.AccountsRequest;
 import ru.yandex.practicum.cash.dto.AccountsResponse;
 
-import java.util.Map;
+import java.math.BigDecimal;
 
 @Service
 @RequiredArgsConstructor
@@ -18,14 +18,16 @@ public class AccountsClient {
 
     private final RestTemplate restTemplate;
 
-    public Double deposit(Long userId, String currency, Double amount) {
+    private static final String ACCOUNTS_URL = "http://bankapp-accounts:8080";
+
+    public BigDecimal deposit(Long userId, String currency, BigDecimal amount) {
         log.debug("Depositing {} {} to user {}", amount, currency, userId);
 
         AccountsRequest request = new AccountsRequest(userId, currency, amount);
 
         try {
             ResponseEntity<AccountsResponse> response = restTemplate.postForEntity(
-                    "/accounts/api/accounts/deposit",
+                    ACCOUNTS_URL + "/api/accounts/deposit",
                     request,
                     AccountsResponse.class
             );
@@ -38,14 +40,14 @@ public class AccountsClient {
         }
     }
 
-    public Double withdraw(Long userId, String currency, Double amount) {
+    public BigDecimal withdraw(Long userId, String currency, BigDecimal amount) {
         log.debug("Withdrawing {} {} from user {}", amount, currency, userId);
 
         AccountsRequest request = new AccountsRequest(userId, currency, amount);
 
         try {
             ResponseEntity<AccountsResponse> response = restTemplate.postForEntity(
-                    "/accounts/api/accounts/withdraw",
+                    ACCOUNTS_URL + "/api/accounts/withdraw",
                     request,
                     AccountsResponse.class
             );
