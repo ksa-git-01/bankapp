@@ -1,0 +1,58 @@
+global:
+  security:
+    allowInsecureImages: true
+
+kafka:
+  enabled: true
+
+  image:
+    registry: docker.io
+    repository: bitnamilegacy/kafka
+    tag: 3.9.0-debian-12-r13
+    pullPolicy: IfNotPresent
+
+  replicaCount: 1
+
+  controller:
+    replicaCount: 1
+
+  kraft:
+    enabled: true
+
+  listeners:
+    client:
+      protocol: PLAINTEXT
+    controller:
+      protocol: PLAINTEXT
+    interbroker:
+      protocol: PLAINTEXT
+
+  persistence:
+    enabled: true
+    size: 2Gi
+
+  provisioning:
+    enabled: true
+    topics:
+      - name: notifications-events
+        partitions: 2
+        replicationFactor: 1
+        config:
+          min.insync.replicas: "1"
+          retention.ms: "604800000"
+      - name: exchange-rates
+        partitions: 1
+        replicationFactor: 1
+        config:
+          min.insync.replicas: "1"
+          retention.ms: "86400000"
+
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 250m
+      memory: 256Mi
+
+  heapOpts: "-Xmx256m -Xms256m"
