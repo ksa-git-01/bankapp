@@ -23,3 +23,6 @@ database:
   name: accounts_db
   user: accounts_user
   password: accounts_password
+
+kafka:
+  server: bankapp-kafka:9092
