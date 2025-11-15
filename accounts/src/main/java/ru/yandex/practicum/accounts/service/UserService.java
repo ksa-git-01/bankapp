@@ -24,7 +24,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final NotificationsClient notificationsClient;
+    private final NotificationProducer notificationProducer;
 
     public UserInfoResponse getUserInfoByUserId(Long userId) {
         log.debug("Getting user info for userId: {}", userId);
@@ -75,10 +75,10 @@ public class UserService {
 
         log.debug("Password updated successfully for userId: {}", userId);
 
-        notificationsClient.sendNotification(
+        notificationProducer.sendNotification(
                 userId,
                 "PASSWORD_CHANGE",
-                "Your password has been changed successfully. If you didn't make this change, please contact support immediately."
+                "Your password has been changed successfully."
         );
     }
 
