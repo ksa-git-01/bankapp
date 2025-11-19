@@ -3,6 +3,7 @@ package ru.yandex.practicum.exchange.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.exchange.dto.ExchangeRate;
 import ru.yandex.practicum.exchange.dto.RatesResponse;
 import ru.yandex.practicum.exchange.model.Rate;
 import ru.yandex.practicum.exchange.repository.RateRepository;
@@ -18,18 +19,18 @@ import java.util.Optional;
 public class RateService {
     private final RateRepository rateRepository;
 
-    public void createRate(String currencyFrom, String currencyTo, BigDecimal ratio){
-        log.debug("Creating rate : {} {} {}", currencyFrom, currencyTo, ratio);
-        Optional<Rate> rate = rateRepository.findByCurrencyFromAndCurrencyTo(currencyFrom, currencyTo);
-        rate.ifPresentOrElse(r -> {
-            r.setRatio(ratio);
+    public void createRate(ExchangeRate rate){
+        log.debug("Creating rate : {} {} {}", rate.getCurrencyFrom(), rate.getCurrencyTo(), rate.getRatio());
+        Optional<Rate> currentRate = rateRepository.findByCurrencyFromAndCurrencyTo(rate.getCurrencyFrom(), rate.getCurrencyTo());
+        currentRate.ifPresentOrElse(r -> {
+            r.setRatio(rate.getRatio());
             rateRepository.save(r);
             },
                 () -> {
                     Rate newRate = new Rate();
-                    newRate.setCurrencyFrom(currencyFrom);
-                    newRate.setCurrencyTo(currencyTo);
-                    newRate.setRatio(ratio);
+                    newRate.setCurrencyFrom(rate.getCurrencyFrom());
+                    newRate.setCurrencyTo(rate.getCurrencyTo());
+                    newRate.setRatio(rate.getRatio());
                     rateRepository.save(newRate);
                 });
     }
