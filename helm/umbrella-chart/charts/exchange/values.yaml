@@ -23,3 +23,6 @@ database:
   name: exchange_db
   user: exchange_user
   password: exchange_password
+
+kafka:
+  server: kafka:9092
