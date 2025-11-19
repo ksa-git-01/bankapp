@@ -26,10 +26,13 @@ class CashServiceIntegrationTest {
     @MockitoBean
     private AccountsClient accountsClient;
 
+    @MockitoBean
+    private NotificationProducer notificationProducer;
+
 
     @BeforeEach
     void setUp() {
-        reset(blockerClient, accountsClient);
+        reset(blockerClient, accountsClient, notificationProducer);
     }
 
     @Test
@@ -47,7 +50,6 @@ class CashServiceIntegrationTest {
 
         verify(blockerClient).checkOperation(any(CashOperationRequest.class));
         verify(accountsClient).deposit(1L, "RUB", BigDecimal.valueOf(1000.0));
-        //verify(notificationsClient).sendNotification(eq(1L), eq("DEPOSIT"), anyString(), eq(BigDecimal.valueOf(1000.0)), eq("RUB"));
     }
 
     @Test
@@ -65,7 +67,6 @@ class CashServiceIntegrationTest {
 
         verify(blockerClient).checkOperation(any(CashOperationRequest.class));
         verify(accountsClient).withdraw(1L, "RUB", BigDecimal.valueOf(500));
-        //verify(notificationsClient).sendNotification(eq(1L), eq("WITHDRAW"), anyString(), eq(BigDecimal.valueOf(500)), eq("RUB"));
     }
 
     @Test
@@ -83,7 +84,6 @@ class CashServiceIntegrationTest {
         verify(blockerClient).checkOperation(any(CashOperationRequest.class));
         verify(accountsClient, never()).deposit(anyLong(), anyString(), BigDecimal.valueOf(anyDouble()));
         verify(accountsClient, never()).withdraw(anyLong(), anyString(), BigDecimal.valueOf(anyDouble()));
-        //verify(notificationsClient, never()).sendNotification(anyLong(), anyString(), anyString(), BigDecimal.valueOf(anyDouble()), anyString());
     }
 
     @Test
@@ -102,9 +102,8 @@ class CashServiceIntegrationTest {
 
         verify(blockerClient).checkOperation(any(CashOperationRequest.class));
         verify(accountsClient).deposit(1L, "RUB", BigDecimal.valueOf(1000.0));
-        //verify(notificationsClient, never()).sendNotification(anyLong(), anyString(), anyString(), BigDecimal.valueOf(anyDouble()), anyString());
     }
-/*
+
     @Test
     void cashOperationWhenNotificationFails() {
         CashOperationRequest request = new CashOperationRequest(1L, "DEPOSIT", "RUB", BigDecimal.valueOf(1000.0));
@@ -112,7 +111,7 @@ class CashServiceIntegrationTest {
         when(blockerClient.checkOperation(any(CashOperationRequest.class))).thenReturn(false);
         when(accountsClient.deposit(1L, "RUB", BigDecimal.valueOf(1000.0))).thenReturn(BigDecimal.valueOf(5000.0));
         doThrow(new RuntimeException("Notification service unavailable"))
-                .when(notificationsClient).sendNotification(anyLong(), anyString(), anyString(), BigDecimal.valueOf(anyDouble()), anyString());
+                .when(notificationProducer).sendNotification(anyLong(), anyString(), anyString());
 
         CashOperationResponse response = cashService.processCashOperation(request);
 
@@ -123,7 +122,7 @@ class CashServiceIntegrationTest {
         verify(blockerClient).checkOperation(any(CashOperationRequest.class));
         verify(accountsClient).deposit(1L, "RUB", BigDecimal.valueOf(1000.0));
     }
-*/
+
     @Test
     void cashOperationWithInvalidOperationType() {
         CashOperationRequest request = new CashOperationRequest(1L, "INVALID", "RUB", BigDecimal.valueOf(1000.0));
