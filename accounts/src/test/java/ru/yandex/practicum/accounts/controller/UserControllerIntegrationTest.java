@@ -12,14 +12,12 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.accounts.configuration.RsaKeyProperties;
 import ru.yandex.practicum.accounts.configuration.TestContainersConfiguration;
 import ru.yandex.practicum.accounts.dto.UpdatePasswordRequest;
 import ru.yandex.practicum.accounts.dto.UpdateUserInfoRequest;
-import ru.yandex.practicum.accounts.service.NotificationsClient;
 
 import java.security.interfaces.RSAPrivateKey;
 import java.time.LocalDate;
@@ -46,9 +44,6 @@ class UserControllerIntegrationTest {
 
     @Autowired
     private RsaKeyProperties rsaKeyProperties;
-
-    @MockitoBean
-    private NotificationsClient notificationsClient;
 
     private String userJwtToken;
     private RSAPrivateKey testPrivateKey;
