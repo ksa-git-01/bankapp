@@ -1,4 +1,4 @@
-# Проектная работа 10 спринта
+# Проектная работа 11 спринта
 
 ## Spring Boot приложение BankApp
 
@@ -8,6 +8,7 @@
 Java 21
 Spring Boot 3.5.4
 PostgreSQL 16.9
+Kafka
 Maven
 Testcontainers
 Docker
@@ -43,7 +44,7 @@ JDK 21
 - Запустить Minukube:
 ```
 minikube delete
-minikube start --cpus=6 --memory=4096 --driver=docker
+minikube start --cpus=6 --memory=4096 --driver=docker --insecure-registry="localhost:5000" --static-ip=192.168.49.2
 ```
 - Включить аддон Ingress
 ```
@@ -83,6 +84,11 @@ helm upgrade bankapp . -n prod
 ```
 Для работы с приложением нужно дождаться полного запуска всех подов, это может занять пару минут
 
+- После первого запуска, дождаться пока запустится pod с кафкой и создать топики
+``` 
+kubectl exec -it kafka-0 -n test -- /opt/kafka/bin/kafka-topics.sh --create --topic notifications-events --bootstrap-server localhost:9092 --partitions 1 --replication-factor 1
+kubectl exec -it kafka-0 -n test -- /opt/kafka/bin/kafka-topics.sh --create --topic exchange-rates --bootstrap-server localhost:9092 --partitions 1 --replication-factor 1
+```
 - Если нужен доступ к приложению через браузер хоста, то создать тоннель в отдельном терминале.
 Окно не закрывать
 ```
