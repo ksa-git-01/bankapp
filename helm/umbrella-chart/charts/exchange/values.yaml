@@ -19,7 +19,7 @@ resources:
 
 database:
   host: bankapp-postgresql-exchange
-  port: 5432
+  port: "5432"
   name: exchange_db
   user: exchange_user
   password: exchange_password

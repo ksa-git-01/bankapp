@@ -21,11 +21,17 @@ kafka:
 
   listeners:
     client:
+      name: PLAINTEXT
       protocol: PLAINTEXT
+      containerPort: 9092
     controller:
+      name: CONTROLLER
       protocol: PLAINTEXT
+      containerPort: 9093
     interbroker:
+      name: INTERNAL
       protocol: PLAINTEXT
+      containerPort: 9094
 
   persistence:
     enabled: true
