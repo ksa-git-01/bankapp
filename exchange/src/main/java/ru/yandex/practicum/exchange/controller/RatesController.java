@@ -17,17 +17,6 @@ import java.util.List;
 public class RatesController {
     private final RateService rateService;
 
-    @PostMapping
-    public ResponseEntity<?> createRate(@RequestBody RatesRequest request){
-        try {
-            rateService.createRate(request.currencyFrom(), request.currencyTo(), request.ratio());
-            return ResponseEntity.ok().build();
-        } catch (Exception e) {
-            log.debug("createRate: {}", e.getMessage());
-            return ResponseEntity.internalServerError().body(e.getMessage());
-        }
-    }
-
     @GetMapping
     public ResponseEntity<List<RatesResponse>> getRates(){
         try {

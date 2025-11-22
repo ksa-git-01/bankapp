@@ -15,7 +15,7 @@ import java.util.List;
 public class TransferService {
 
     private final AccountsClient accountsClient;
-    private final NotificationsClient notificationsClient;
+    private final NotificationProducer notificationProducer;
     private final ExchangeClient exchangeClient;
     private final CurrencyConverter currencyConverter;
 
@@ -106,23 +106,19 @@ public class TransferService {
     private void sendNotifications(TransferRequest request) {
         try {
             // Уведомление отправителю
-            notificationsClient.sendNotification(
+            notificationProducer.sendNotification(
                     request.fromUserId(),
                     "TRANSFER_SENT",
                     String.format("You sent %.2f %s to user %d",
-                            request.amount(), request.toCurrency(), request.toUserId()),
-                    request.amount(),
-                    request.fromCurrency()
+                            request.amount(), request.toCurrency(), request.toUserId())
             );
 
             // Уведомление получателю
-            notificationsClient.sendNotification(
+            notificationProducer.sendNotification(
                     request.toUserId(),
                     "TRANSFER_RECEIVED",
                     String.format("You received %.2f %s from user %d",
-                            request.amount(), request.toCurrency(), request.fromUserId()),
-                    request.amount(),
-                    request.toCurrency()
+                            request.amount(), request.toCurrency(), request.fromUserId())
             );
 
         } catch (Exception e) {

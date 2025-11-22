@@ -19,7 +19,10 @@ resources:
 
 database:
   host: bankapp-postgresql-accounts
-  port: 5432
+  port: "5432"
   name: accounts_db
   user: accounts_user
   password: accounts_password
+
+kafka:
+  server: kafka:9092

@@ -23,6 +23,8 @@ spec:
               containerPort: {{ .Values.service.port }}
               protocol: TCP
           env:
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              value: {{ .Values.kafka.server | quote }}
             - name: TRANSFER_CLIENT_SECRET
               valueFrom:
                 secretKeyRef:

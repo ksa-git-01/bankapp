@@ -15,7 +15,7 @@ public class CashService {
 
     private final BlockerClient blockerClient;
     private final AccountsClient accountsClient;
-    private final NotificationsClient notificationsClient;
+    private final NotificationProducer notificationProducer;
 
     public CashOperationResponse processCashOperation(CashOperationRequest request) {
         log.debug("Processing cash operation: user={}, operation={}, amount={} {}",
@@ -75,12 +75,10 @@ public class CashService {
             }
             try {
                 // 3. Отправить уведомление
-                notificationsClient.sendNotification(
+                notificationProducer.sendNotification(
                         request.getUserId(),
                         notificationType,
-                        notificationMessage,
-                        request.getAmount(),
-                        request.getCurrency()
+                        notificationMessage
                 );
             } catch (Exception e) {
                 // Если отправка уведомления упала, то все равно продолжаем
