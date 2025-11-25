@@ -75,6 +75,9 @@ docker build -t transfer:latest -f transfer/Dockerfile .
 ```
 helm repo add bitnami https://charts.bitnami.com/bitnami
 helm repo add openzipkin https://openzipkin.github.io/zipkin
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo add grafana https://grafana.github.io/helm-charts
+helm repo update
 ```
 
 - Перейти в каталог с зонтичным хелмчартом и установить его в кластер
@@ -96,6 +99,14 @@ helm upgrade bankapp . -n prod
 kubectl exec -it kafka-0 -n test -- /opt/kafka/bin/kafka-topics.sh --create --topic notifications-events --bootstrap-server localhost:9092 --partitions 1 --replication-factor 1
 kubectl exec -it kafka-0 -n test -- /opt/kafka/bin/kafka-topics.sh --create --topic exchange-rates --bootstrap-server localhost:9092 --partitions 1 --replication-factor 1
 ```
+
+- Из корня проекта выполнить
+```
+cd prometheus
+kubectl apply -f servicemonitor-frontui.yaml -n test
+kubectl apply -f servicemonitor-backend.yaml -n test
+``` 
+
 - Если нужен доступ к приложению через браузер хоста, то создать тоннель в отдельном терминале.
 Окно не закрывать
 ```
@@ -118,8 +129,16 @@ kubectl port-forward -n test service/bankapp-keycloak 18080:8080
 minikube service bankapp=zipkin --url -n test
 # в терминале будет выведен временный url веб-интерфейса Zipkin 
 ```
-
-
+- Если хотим перейти в веб-интерфейс Grafana, необходимо в отдельном окне терминала выполнить команду (Окно не закрывать)
+```
+kubectl port-forward -n test svc/bankapp-grafana 18090:3000
+# Grafana станет доступна по url: http://localhost:18090
+```
+- Если хотим перейти в веб-интерфейс Prometheus, необходимо в отдельном окне терминала выполнить команду (Окно не закрывать)
+```
+kubectl port-forward -n test svc/bankapp-kube-prometheus-st-prometheus 9090:9090
+# Prometheus станет доступна по url: http://localhost:9090
+```
 Используются порты ОС хоста:
 - 8080..8088 - Сервисы
 - 15433 - PostgreSQL keycloak
