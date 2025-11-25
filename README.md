@@ -16,6 +16,7 @@ Keycloak
 Minikube
 kubectl
 Helm
+Zipkin
 ```
 
 ### Требования к окружению
@@ -70,13 +71,19 @@ docker build -t generator:latest -f generator/Dockerfile .
 docker build -t notifications:latest -f notifications/Dockerfile .
 docker build -t transfer:latest -f transfer/Dockerfile .
 ```
+- Если в Helm еще не добавлены репозитории их нужно добавить командами:
+```
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm repo add openzipkin https://openzipkin.github.io/zipkin
+```
+
 - Перейти в каталог с зонтичным хелмчартом и установить его в кластер
 ```
 cd helm/umbrella-chart
 
 helm install bankapp . -n test --set accounts.keycloak.client.secretValue=ACCOUNTS-client-secret-123456 --set cash.keycloak.client.secretValue=CASH-client-secret-123456 --set frontui.keycloak.client.secretValue=FRONTUI-client-secret-123456 --set generator.keycloak.client.secretValue=GENERATOR-client-secret-123456 --set transfer.keycloak.client.secretValue=TRANSFER-client-secret-123456
 # или
-helm install bankapp . -n prod
+helm install bankapp . -n prod --set accounts.keycloak.client.secretValue=ACCOUNTS-client-secret-123456 --set cash.keycloak.client.secretValue=CASH-client-secret-123456 --set frontui.keycloak.client.secretValue=FRONTUI-client-secret-123456 --set generator.keycloak.client.secretValue=GENERATOR-client-secret-123456 --set transfer.keycloak.client.secretValue=TRANSFER-client-secret-123456
 
 # или обновить, если чарт уже устанавливался ранее 
 helm upgrade bankapp . -n test
@@ -106,7 +113,11 @@ minikube dashboard --url
 ```
 kubectl port-forward -n test service/bankapp-keycloak 18080:8080
 ```
-
+- Если хотим перейти в веб-интерфейс Zipkin, необходимо в отдельном окне терминала выполнить команду (Окно не закрывать)
+```
+minikube service bankapp=zipkin --url -n test
+# в терминале будет выведен временный url веб-интерфейса Zipkin 
+```
 
 
 Используются порты ОС хоста:
