@@ -98,6 +98,7 @@ helm upgrade bankapp . -n prod
 ``` 
 kubectl exec -it kafka-0 -n test -- /opt/kafka/bin/kafka-topics.sh --create --topic notifications-events --bootstrap-server localhost:9092 --partitions 1 --replication-factor 1
 kubectl exec -it kafka-0 -n test -- /opt/kafka/bin/kafka-topics.sh --create --topic exchange-rates --bootstrap-server localhost:9092 --partitions 1 --replication-factor 1
+kubectl exec -it kafka-0 -n test -- /opt/kafka/bin/kafka-topics.sh --create --topic bankapp-logs --bootstrap-server localhost:9092 --partitions 1 --replication-factor 1
 ```
 
 - Из корня проекта выполнить
