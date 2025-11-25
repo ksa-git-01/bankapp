@@ -146,6 +146,17 @@ kubectl port-forward -n test svc/bankapp-kube-prometheus-st-prometheus 9090:9090
 - 18080 - Веб-интерфейс keycloak
 - 8500 - Consul 
 
+### Настройка дашбордов Grafana
+```
+1. Зайти в веб-интерфейс Grafana, логин/пароль: admin/admin123
+2. Добавить новый DataSource: тип Prometheus, адрес http://bankapp-kube-prometheus-st-prometheus:9090
+Остальные настройки по умолчанию
+3. Импортировать готовые дашборды:
+Dashboards → New → Import
+4701 - JVM
+11378 - Spring Boot Statistics
+```
+
 ### Ресурсы проекта
 
 ```
