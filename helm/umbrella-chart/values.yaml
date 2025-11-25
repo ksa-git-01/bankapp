@@ -1,0 +1,6 @@
+zipkin:
+  service:
+    type: NodePort
+    port: 9411
+  storage:
+    type: empty
