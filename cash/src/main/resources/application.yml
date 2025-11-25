@@ -31,6 +31,8 @@ spring:
 kafka:
   topics:
     notifications: notifications-events
+  bootstrap:
+    servers: ${KAFKA_BOOTSTRAP_SERVERS}
 
 management:
   endpoints:
@@ -60,7 +62,4 @@ server:
   port: 8080
 
 logging:
-  level:
-    root: INFO
-    ru.yandex.practicum.cash: INFO
-    org.springframework.security: DEBUG
+  config: classpath:log4j2.xml

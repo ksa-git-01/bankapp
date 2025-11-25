@@ -6,6 +6,8 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: http://bankapp-keycloak:8080/realms/bankapp
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
 
 management:
   endpoints:
@@ -34,9 +36,9 @@ rsa:
 server:
   port: 8080
 
+kafka:
+  bootstrap:
+    servers: ${KAFKA_BOOTSTRAP_SERVERS}
+
 logging:
-  level:
-    root: INFO
-    ru.yandex.practicum.blocker: INFO
-    org.springframework.security: DEBUG
-    org.springframework.security.oauth2: DEBUG
+  config: classpath:log4j2.xml
