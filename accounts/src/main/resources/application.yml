@@ -77,12 +77,4 @@ jwt:
   expiration: 3600000
 
 logging:
-  level:
-    root: INFO
-    ru.yandex.practicum.accounts: INFO
-    ru.yandex.practicum.accounts.configuration: INFO
-    org.springframework.security: DEBUG
-    org.springframework.security.oauth2: DEBUG
-    org.springframework.security.oauth2.server.resource: TRACE
-    org.springframework.security.oauth2.jwt: TRACE
-    org.springframework.web.client: DEBUG
+  config: classpath:log4j2.xml
