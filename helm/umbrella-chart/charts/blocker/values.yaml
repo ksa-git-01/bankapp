@@ -17,6 +17,9 @@ resources:
     memory: "512Mi"
     cpu: "500m"
 
+kafka:
+  server: kafka:9092
+
 labels:
   app: bankapp
   monitoring: enabled
