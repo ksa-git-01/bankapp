@@ -48,3 +48,7 @@ dependencies:
   - name: zipkin
     version: 0.7.0
     repository: https://openzipkin.github.io/zipkin
+  - name: kube-prometheus-stack
+    version: 58.2.0
+    repository: https://prometheus-community.github.io/helm-charts
+    alias: kube-prometheus-stack

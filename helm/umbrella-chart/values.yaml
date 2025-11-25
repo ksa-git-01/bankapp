@@ -4,3 +4,69 @@ zipkin:
     port: 9411
   storage:
     type: empty
+kube-prometheus-stack:
+  grafana:
+    enabled: true
+    namespace: test
+    # Настройка сторонних дашбордов через метки
+    sidecar:
+      dashboards:
+        enabled: true
+        label: grafana_dashboard
+    # Настройка администратора
+    adminUser: admin
+    adminPassword: "admin123"
+    # Настройка сервиса
+    service:
+      type: ClusterIP
+      port: 3000
+    persistence:
+      enabled: true
+      storageClassName: "standard"
+      accessModes: ["ReadWriteOnce"]
+      size: 1Gi
+
+  prometheus:
+    enabled: true
+    namespace: test
+    prometheusSpec:
+      scrapeInterval: 30s
+      retention: 15d
+      retentionSize: "30GB"
+      serviceMonitorSelectorNilUsesHelmValues: false
+      podMonitorSelectorNilUsesHelmValues: false
+      # Настройки хранения
+      storageSpec:
+        volumeClaimTemplate:
+          spec:
+            storageClassName: "standard"
+            accessModes: ["ReadWriteOnce"]
+            resources:
+              requests:
+                storage: 20Gi
+
+  alertmanager:
+    enabled: true
+    namespace: test
+    alertmanagerSpec:
+      storage:
+        volumeClaimTemplate:
+          spec:
+            storageClassName: "standard"
+            accessModes: ["ReadWriteOnce"]
+            resources:
+              requests:
+                storage: 2Gi
+
+  # Дополнительные компоненты
+  kubeStateMetrics:
+    enabled: true
+    namespace: test
+
+  nodeExporter:
+    enabled: true
+    namespace: test
+
+  prometheusOperator:
+    enabled: true
+    namespace: test
