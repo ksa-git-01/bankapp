@@ -57,7 +57,7 @@ public class AccountController {
     public ResponseEntity<AccountOperationResponse> deposit(
             @RequestBody DepositRequest request) {
 
-        log.debug("Deposit request: user={}, currency={}, amount={}",
+        log.info("Deposit request: user={}, currency={}, amount={}",
                 request.getUserId(), request.getCurrency(), request.getAmount());
 
         try {
@@ -87,7 +87,7 @@ public class AccountController {
     public ResponseEntity<AccountOperationResponse> withdraw(
             @RequestBody WithdrawRequest request) {
 
-        log.debug("Withdraw request: user={}, currency={}, amount={}",
+        log.info("Withdraw request: user={}, currency={}, amount={}",
                 request.getUserId(), request.getCurrency(), request.getAmount());
 
         try {
