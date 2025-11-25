@@ -21,7 +21,7 @@ public class RatesController {
 
     @GetMapping
     public ResponseEntity<List<RatesResponse>> getRates() {
-        log.debug("Fetching rates");
+        log.info("Fetching rates");
         try {
             List<RatesResponse> rates = exchangeClient.getRates();
             return ResponseEntity.ok(rates);

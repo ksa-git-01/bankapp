@@ -35,16 +35,16 @@ public class RemoteAuthenticationProvider implements AuthenticationProvider {
         String password = authentication.getCredentials().toString();
 
         AuthRequest request = new AuthRequest(username, password);
-        log.debug("AuthRequest: {}", request);
+        log.info("AuthRequest: {}", request);
         String url = ACCOUNTS_URL + "/api/auth";
         log.debug("ACCOUNTS_URL: {}", ACCOUNTS_URL + "/api/auth");
 
         AuthResponse response;
         try {
             response = simpleRestTemplate.postForObject(url, request, AuthResponse.class);
-            log.debug("AuthResponse: {}", response);
+            log.info("AuthResponse: {}", response);
         } catch (Exception e) {
-            log.debug("Authentication failed: {}", e.getMessage());
+            log.warn("Authentication failed: {}", e.getMessage());
             throw new BadCredentialsException("Authentication failed: " + e.getMessage());
         }
 

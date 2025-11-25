@@ -2,6 +2,7 @@ package ru.yandex.practicum.frontui.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -35,7 +36,7 @@ public class MainController {
     @GetMapping("/")
     public String mainPage(Authentication authentication, Model model) {
         String username = authentication.getName();
-
+        log.info("@GetMapping / for user: {}", username);
         @SuppressWarnings("unchecked")
         Map<String, Object> details = (Map<String, Object>) authentication.getDetails();
         Long userId = (Long) details.get("userId");
@@ -88,16 +89,14 @@ public class MainController {
             @RequestParam("confirm_password") String confirmPassword,
             Authentication authentication,
             Model model) {
-
         @SuppressWarnings("unchecked")
         Map<String, Object> details = (Map<String, Object>) authentication.getDetails();
         Long userId = (Long) details.get("userId");
-
         try {
             UpdatePasswordRequest request = new UpdatePasswordRequest(password, confirmPassword);
             accountsClient.updatePassword(userId, request);
 
-            log.debug("Password changed successfully for user: {}", login);
+            log.info("Password changed successfully for user: {}", login);
             return "redirect:/";
 
         } catch (AccountsServiceException e) {
@@ -142,19 +141,19 @@ public class MainController {
 
                     if (!exists) {
                         accountsClient.createAccount(userId, currency);
-                        log.debug("Account created: user={}, currency={}", login, currency);
+                        log.info("Account created: user={}, currency={}", login, currency);
                     }
                 }
 
                 for (AccountDto existingAccount : existingAccounts) {
                     if (!account.contains(existingAccount.currency())) {
                         accountsClient.deleteAccount(userId, existingAccount.currency());
-                        log.debug("Account deleted: user={}, currency={}", login, existingAccount.currency());
+                        log.info("Account deleted: user={}, currency={}", login, existingAccount.currency());
                     }
                 }
             }
 
-            log.debug("User info updated successfully for user: {}", login);
+            log.info("User info updated successfully for user: {}", login);
             return "redirect:/";
 
         } catch (AccountsServiceException e) {
@@ -181,7 +180,7 @@ public class MainController {
             String operation = "PUT".equals(action) ? "DEPOSIT" : "GET".equals(action) ? "WITHDRAW" : "UNDEFINED";
             cashClient.processCashOperation(userId, operation, currency, value);
 
-            log.debug("Cash operation successful: user={}, operation={}", login, operation);
+            log.info("Cash operation successful: user={}, operation={}", login, operation);
             return "redirect:/";
 
         } catch (RuntimeException e) {
@@ -218,7 +217,7 @@ public class MainController {
 
             transferClient.transfer(fromUserId, toUserId, fromCurrency, toCurrency, value);
 
-            log.debug("Transfer successful: from user {} to user {}", fromUserId, toUserId);
+            log.info("Transfer successful: from user {} to user {}", fromUserId, toUserId);
             return "redirect:/";
 
         } catch (RuntimeException e) {

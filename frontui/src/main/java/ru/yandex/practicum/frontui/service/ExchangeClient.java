@@ -20,7 +20,7 @@ public class ExchangeClient {
     private static final String EXCHANGE_URL = "http://bankapp-exchange:8080";
 
     public List<RatesResponse> getRates() {
-        log.debug("Getting rates from exchange service");
+        log.info("Getting rates from exchange service");
         String url = EXCHANGE_URL + "/api/rates";
 
         ResponseEntity<List<RatesResponse>> response = restTemplate.exchange(

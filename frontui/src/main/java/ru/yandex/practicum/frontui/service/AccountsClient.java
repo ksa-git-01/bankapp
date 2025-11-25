@@ -27,7 +27,7 @@ public class AccountsClient {
     private static final String ACCOUNTS_URL = "http://bankapp-accounts:8080";
 
     public void registerUser(RegistrationRequest request) {
-        log.debug("Registering user via accounts service: {}", request.login());
+        log.info("Registering user via accounts service: {}", request.login());
 
         try {
             ResponseEntity<RegistrationResponse> response = restTemplate.postForEntity(
@@ -36,7 +36,7 @@ public class AccountsClient {
                     RegistrationResponse.class
             );
 
-            log.debug("User registered successfully: {}", request.login());
+            log.info("User registered successfully: {}", request.login());
             response.getBody();
 
         } catch (HttpClientErrorException e) {
@@ -46,7 +46,7 @@ public class AccountsClient {
     }
 
     public UserInfoResponse getUserInfoByUserId(Long userId) {
-        log.debug("Getting user info for userId: {}", userId);
+        log.info("Getting user info for userId: {}", userId);
 
         try {
             ResponseEntity<UserInfoResponse> response = restTemplate.getForEntity(
@@ -62,7 +62,7 @@ public class AccountsClient {
     }
 
     public UserInfoResponse getUserInfoByUsername(String username) {
-        log.debug("Getting user info for username: {}", username);
+        log.info("Getting user info for username: {}", username);
 
         try {
             ResponseEntity<UserInfoResponse> response = restTemplate.getForEntity(
@@ -78,7 +78,7 @@ public class AccountsClient {
     }
 
     public void updatePassword(Long userId, UpdatePasswordRequest request) {
-        log.debug("Updating password for userId: {}", userId);
+        log.info("Updating password for userId: {}", userId);
 
         try {
             restTemplate.put(
@@ -86,7 +86,7 @@ public class AccountsClient {
                     request
             );
 
-            log.debug("Password updated successfully");
+            log.info("Password updated successfully");
 
         } catch (HttpClientErrorException e) {
             log.error("Failed to update password: {}", e.getResponseBodyAsString());
@@ -95,7 +95,7 @@ public class AccountsClient {
     }
 
     public void updateUserInfo(Long userId, UpdateUserInfoRequest request) {
-        log.debug("Updating user info for userId: {}", userId);
+        log.info("Updating user info for userId: {}", userId);
 
         try {
             ResponseEntity<UserInfoResponse> response = restTemplate.exchange(
@@ -105,7 +105,7 @@ public class AccountsClient {
                     UserInfoResponse.class
             );
 
-            log.debug("User info updated successfully");
+            log.info("User info updated successfully");
             response.getBody();
 
         } catch (HttpClientErrorException e) {
@@ -115,7 +115,7 @@ public class AccountsClient {
     }
 
     public List<AccountDto> getUserAccounts(Long userId) {
-        log.debug("Getting accounts for userId: {}", userId);
+        log.info("Getting accounts for userId: {}", userId);
 
         try {
             ResponseEntity<List<AccountDto>> response = restTemplate.exchange(
@@ -135,7 +135,7 @@ public class AccountsClient {
     }
 
     public void createAccount(Long userId, String currency) {
-        log.debug("Creating account: userId={}, currency={}", userId, currency);
+        log.info("Creating account: userId={}, currency={}", userId, currency);
 
         CreateAccountRequest request = new CreateAccountRequest(userId, currency);
 
@@ -146,7 +146,7 @@ public class AccountsClient {
                     AccountDto.class
             );
 
-            log.debug("Account created successfully");
+            log.info("Account created successfully");
             response.getBody();
 
         } catch (HttpClientErrorException e) {
@@ -156,11 +156,11 @@ public class AccountsClient {
     }
 
     public void deleteAccount(Long userId, String currency) {
-        log.debug("Deleting account: userId={}, currency={}", userId, currency);
+        log.info("Deleting account: userId={}, currency={}", userId, currency);
 
         try {
             restTemplate.delete(ACCOUNTS_URL + "/api/accounts/user/" + userId + "/currency/" + currency);
-            log.debug("Account deleted successfully");
+            log.info("Account deleted successfully");
 
         } catch (HttpClientErrorException e) {
             log.error("Failed to delete account: {}", e.getResponseBodyAsString());
@@ -169,7 +169,7 @@ public class AccountsClient {
     }
 
     public List<UserListDto> getAllUsers() {
-        log.debug("Getting all users list");
+        log.info("Getting all users list");
 
         try {
             ResponseEntity<List<UserListDto>> response = restTemplate.exchange(

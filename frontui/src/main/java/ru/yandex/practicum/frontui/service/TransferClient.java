@@ -23,7 +23,7 @@ public class TransferClient {
     public void transfer(Long fromUserId, Long toUserId,
                          String fromCurrency, String toCurrency,
                          Double amount) {
-        log.debug("Processing transfer: from user {} to user {}, amount {} {}",
+        log.info("Processing transfer: from user {} to user {}, amount {} {}",
                 fromUserId, toUserId, amount, fromCurrency);
 
         Map<String, Object> request = Map.of(
@@ -41,7 +41,7 @@ public class TransferClient {
                     Map.class
             );
 
-            log.debug("Transfer successful");
+            log.info("Transfer successful");
             response.getBody();
 
         } catch (HttpClientErrorException e) {

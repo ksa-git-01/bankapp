@@ -21,7 +21,7 @@ public class CashClient {
     private static final String CASH_URL = "http://bankapp-cash:8080";
 
     public void processCashOperation(Long userId, String operation, String currency, Double amount) {
-        log.debug("Processing cash operation: user={}, operation={}, currency={}, amount={}",
+        log.info("Processing cash operation: user={}, operation={}, currency={}, amount={}",
                 userId, operation, currency, amount);
 
         Map<String, Object> request = Map.of(
@@ -38,7 +38,7 @@ public class CashClient {
                     Map.class
             );
 
-            log.debug("Cash operation successful");
+            log.info("Cash operation successful");
             response.getBody();
 
         } catch (HttpClientErrorException e) {
