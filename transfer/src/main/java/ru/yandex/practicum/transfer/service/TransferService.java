@@ -20,7 +20,7 @@ public class TransferService {
     private final CurrencyConverter currencyConverter;
 
     public TransferResponse transfer(TransferRequest request) {
-        log.debug("Processing transfer: from user {} to user {}, amount {} {}",
+        log.info("Processing transfer: from user {} to user {}, amount {} {}",
                 request.fromUserId(), request.toUserId(),
                 request.amount(), request.fromCurrency());
         TransferResponse transferResponse;
@@ -43,7 +43,7 @@ public class TransferService {
                     request.amount()
             );
 
-            log.debug("Withdrawn from sender. New balance: {}", fromBalance);
+            log.info("Withdrawn from sender. New balance: {}", fromBalance);
 
             try {
                 // Пополнить счет получателя
@@ -53,7 +53,7 @@ public class TransferService {
                         convertedAmount
                 );
 
-                log.debug("Deposited to receiver. New balance: {}", toBalance);
+                log.info("Deposited to receiver. New balance: {}", toBalance);
 
                 // Отправить уведомления
                 sendNotifications(request);

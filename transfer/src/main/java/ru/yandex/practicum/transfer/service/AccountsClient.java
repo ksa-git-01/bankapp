@@ -21,7 +21,7 @@ public class AccountsClient {
     private static final String ACCOUNTS_URL = "http://bankapp-accounts:8080";
 
     public BigDecimal deposit(Long userId, String currency, BigDecimal amount) {
-        log.debug("Depositing {} {} to user {}", amount, currency, userId);
+        log.info("Depositing {} {} to user {}", amount, currency, userId);
 
         AccountsRequest request = new AccountsRequest(userId, currency, amount);
 
@@ -41,7 +41,7 @@ public class AccountsClient {
     }
 
     public BigDecimal withdraw(Long userId, String currency, BigDecimal amount) {
-        log.debug("Withdrawing {} {} from user {}", amount, currency, userId);
+        log.info("Withdrawing {} {} from user {}", amount, currency, userId);
 
         AccountsRequest request = new AccountsRequest(userId, currency, amount);
 

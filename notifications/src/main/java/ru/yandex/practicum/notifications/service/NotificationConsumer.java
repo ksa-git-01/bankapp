@@ -26,12 +26,12 @@ public class NotificationConsumer {
             @Header(KafkaHeaders.RECEIVED_PARTITION) int partition,
             @Header(KafkaHeaders.OFFSET) long offset
     ) {
-        log.debug("Received notification event from partition {} offset {}: eventId={}, eventType={}",
+        log.info("Received notification event from partition {} offset {}: eventId={}, eventType={}",
                 partition, offset, event.getEventId(), event.getEventType());
 
         try {
             notificationService.processNotificationEvent(event);
-            log.debug("Successfully processed notification event: {}", event.getEventId());
+            log.info("Successfully processed notification event: {}", event.getEventId());
         } catch (Exception e) {
             log.error("Failed to process notification event: {}", event.getEventId(), e);
             throw e;

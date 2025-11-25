@@ -27,6 +27,6 @@ public class ExchangeService {
         history.setCreatedAt(LocalDateTime.now());
 
         exchangeRepository.save(history);
-        log.debug("Exchange history saved for user {}", request.userIdFrom());
+        log.info("Exchange history saved for user {}", request.userIdFrom());
     }
 }

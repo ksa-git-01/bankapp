@@ -35,7 +35,7 @@ public class CashController {
             );
         }
 
-        log.debug("Cash operation request: userId={}, operation={}, amount={}, currency={}",
+        log.info("Cash operation request: userId={}, operation={}, amount={}, currency={}",
                 request.getUserId(), request.getOperation(), request.getAmount(), request.getCurrency());
 
         CashOperationResponse response = cashService.processCashOperation(request);
