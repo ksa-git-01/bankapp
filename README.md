@@ -17,6 +17,11 @@ Minikube
 kubectl
 Helm
 Zipkin
+Prometheus
+Grafana
+Logstash
+Elasticsearch
+Kibana
 ```
 
 ### Требования к окружению
@@ -92,7 +97,7 @@ helm install bankapp . -n prod --set accounts.keycloak.client.secretValue=ACCOUN
 helm upgrade bankapp . -n test
 helm upgrade bankapp . -n prod
 ```
-Для работы с приложением нужно дождаться полного запуска всех подов, это может занять пару минут
+Для работы с приложением нужно дождаться полного запуска всех подов, это может занять до 20 минут
 
 - После первого запуска, дождаться пока запустится pod с кафкой и создать топики
 ``` 
@@ -140,6 +145,13 @@ kubectl port-forward -n test svc/bankapp-grafana 18090:3000
 kubectl port-forward -n test svc/bankapp-kube-prometheus-st-prometheus 9090:9090
 # Prometheus станет доступна по url: http://localhost:9090
 ```
+- Если хотим перейти в веб-интерфейс Kibana, необходимо в отдельном окне терминала выполнить команду (Окно не закрывать)
+```
+kubectl port-forward -n test service/kibana 5601:5601
+# Kibana станет доступна по url: http://localhost:5601
+```
+
+
 Используются порты ОС хоста:
 - 8080..8088 - Сервисы
 - 15433 - PostgreSQL keycloak
