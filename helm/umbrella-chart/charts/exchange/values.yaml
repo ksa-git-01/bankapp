@@ -26,3 +26,8 @@ database:
 
 kafka:
   server: kafka:9092
+
+labels:
+  app: bankapp
+  monitoring: enabled
+  monitoring-path: standard

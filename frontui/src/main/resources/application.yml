@@ -13,15 +13,36 @@ spring:
         provider:
           keycloak:
             token-uri: http://bankapp-keycloak:8080/realms/bankapp/protocol/openid-connect/token
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
 
 management:
   endpoints:
     web:
       exposure:
-        include: health,info
+        include: health,info,prometheus,metrics
   endpoint:
+    info:
+      enabled: true
+    prometheus:
+      enabled: true
+    metrics:
+      enabled: true
     health:
       show-details: always
+  zipkin:
+    tracing:
+      endpoint: http://bankapp-zipkin:9411/api/v2/spans
+  tracing:
+    sampling:
+      probability: 1.0
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
 
 rsa:
   public-key: classpath:certs/public.pem
@@ -31,9 +52,9 @@ server:
   servlet:
     context-path: /frontui
 
+kafka:
+  bootstrap:
+    servers: ${KAFKA_BOOTSTRAP_SERVERS}
+
 logging:
-  level:
-    root: INFO
-    ru.yandex.practicum.frontui: DEBUG
-    ru.yandex.practicum.frontui.configuration.security: DEBUG
-    org.springframework.security.oauth2.client: DEBUG
+  config: classpath:log4j2.xml

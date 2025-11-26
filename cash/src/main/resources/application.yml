@@ -31,15 +31,29 @@ spring:
 kafka:
   topics:
     notifications: notifications-events
+  bootstrap:
+    servers: ${KAFKA_BOOTSTRAP_SERVERS}
 
 management:
   endpoints:
     web:
       exposure:
-        include: health,info
+        include: health,info,prometheus,metrics
   endpoint:
+    info:
+      enabled: true
+    prometheus:
+      enabled: true
+    metrics:
+      enabled: true
     health:
       show-details: always
+  zipkin:
+    tracing:
+      endpoint: http://bankapp-zipkin:9411/api/v2/spans
+  tracing:
+    sampling:
+      probability: 1.0
 
 rsa:
   public-key: classpath:certs/public.pem
@@ -48,7 +62,4 @@ server:
   port: 8080
 
 logging:
-  level:
-    root: INFO
-    ru.yandex.practicum.cash: INFO
-    org.springframework.security: DEBUG
+  config: classpath:log4j2.xml

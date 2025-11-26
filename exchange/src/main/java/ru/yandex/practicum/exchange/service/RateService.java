@@ -20,7 +20,7 @@ public class RateService {
     private final RateRepository rateRepository;
 
     public void createRate(ExchangeRate rate){
-        log.debug("Creating rate : {} {} {}", rate.getCurrencyFrom(), rate.getCurrencyTo(), rate.getRatio());
+        log.info("Creating rate : {} {} {}", rate.getCurrencyFrom(), rate.getCurrencyTo(), rate.getRatio());
         Optional<Rate> currentRate = rateRepository.findByCurrencyFromAndCurrencyTo(rate.getCurrencyFrom(), rate.getCurrencyTo());
         currentRate.ifPresentOrElse(r -> {
             r.setRatio(rate.getRatio());

@@ -1,0 +1,20 @@
+replicaCount: 1
+
+image:
+  repository: logstash
+  tag: "9.2.1"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 5044
+
+resources:
+  requests:
+    memory: "512Mi"
+    cpu: "500m"
+  limits:
+    memory: "1Gi"
+    cpu: "1"
+
+pipelinePath: /usr/share/logstash/pipeline

@@ -37,7 +37,7 @@ public class NotificationProducer {
 
             future.whenComplete((result, ex) -> {
                 if (ex == null) {
-                    log.debug("Sent notification event: {} to topic: {} partition: {}",
+                    log.info("Sent notification event: {} to topic: {} partition: {}",
                             event.getEventId(),
                             notificationsTopic,
                             result.getRecordMetadata().partition());

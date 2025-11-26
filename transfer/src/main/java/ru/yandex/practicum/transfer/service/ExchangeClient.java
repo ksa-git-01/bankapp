@@ -23,7 +23,7 @@ public class ExchangeClient {
     private static final String EXCHANGE_URL = "http://bankapp-exchange:8080";
 
     public List<ExchangeRateResponse> getRates() {
-        log.debug("Getting rates");
+        log.info("Getting rates");
 
         try {
             ResponseEntity<List<ExchangeRateResponse>> response = restTemplate.exchange(
@@ -43,7 +43,7 @@ public class ExchangeClient {
     }
 
     public void createConversionHistory(ExchangeHistoryRequest request) {
-        log.debug("Creating conversion history record");
+        log.info("Creating conversion history record");
 
         try {
             ResponseEntity<Void> response = restTemplate.postForEntity(

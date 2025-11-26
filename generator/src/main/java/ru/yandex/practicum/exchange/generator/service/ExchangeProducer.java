@@ -36,7 +36,7 @@ public class ExchangeProducer {
 
             future.whenComplete((result, ex) -> {
                 if (ex == null) {
-                    log.debug("Sent rate from {} to {} ratio {} to topic: {} partition: {}",
+                    log.info("Sent rate from {} to {} ratio {} to topic: {} partition: {}",
                             rate.getCurrencyFrom(),
                             rate.getCurrencyTo(),
                             rate.getRatio(),

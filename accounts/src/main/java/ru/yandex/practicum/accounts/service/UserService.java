@@ -27,7 +27,7 @@ public class UserService {
     private final NotificationProducer notificationProducer;
 
     public UserInfoResponse getUserInfoByUserId(Long userId) {
-        log.debug("Getting user info for userId: {}", userId);
+        log.info("Getting user info for userId: {}", userId);
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
@@ -43,7 +43,7 @@ public class UserService {
     }
 
     public UserInfoResponse getUserInfoByUsername(String username) {
-        log.debug("Getting user info for username: {}", username);
+        log.info("Getting user info for username: {}", username);
 
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
@@ -60,7 +60,7 @@ public class UserService {
 
     @Transactional
     public void updatePassword(Long userId, UpdatePasswordRequest request) {
-        log.debug("Updating password for userId: {}", userId);
+        log.info("Updating password for userId: {}", userId);
 
         List<String> errors = validatePasswordUpdate(request);
         if (!errors.isEmpty()) {
@@ -73,7 +73,7 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         userRepository.save(user);
 
-        log.debug("Password updated successfully for userId: {}", userId);
+        log.info("Password updated successfully for userId: {}", userId);
 
         notificationProducer.sendNotification(
                 userId,
@@ -84,7 +84,7 @@ public class UserService {
 
     @Transactional
     public UserInfoResponse updateUserInfo(Long userId, UpdateUserInfoRequest request) {
-        log.debug("Updating user info for userId: {}", userId);
+        log.info("Updating user info for userId: {}", userId);
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
@@ -95,7 +95,7 @@ public class UserService {
 
         User savedUser = userRepository.save(user);
 
-        log.debug("User info updated successfully for userId: {}", userId);
+        log.info("User info updated successfully for userId: {}", userId);
 
         return new UserInfoResponse(
                 savedUser.getId(),
@@ -108,7 +108,7 @@ public class UserService {
     }
 
     public List<UserListResponse> getAllUsers() {
-        log.debug("Getting all users list");
+        log.info("Getting all users list");
 
         List<User> users = (List<User>) userRepository.findAll();
 

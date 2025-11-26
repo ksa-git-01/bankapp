@@ -18,7 +18,7 @@ public class CashService {
     private final NotificationProducer notificationProducer;
 
     public CashOperationResponse processCashOperation(CashOperationRequest request) {
-        log.debug("Processing cash operation: user={}, operation={}, amount={} {}",
+        log.info("Processing cash operation: user={}, operation={}, amount={} {}",
                 request.getUserId(), request.getOperation(),
                 request.getAmount(), request.getCurrency());
 
@@ -51,7 +51,7 @@ public class CashService {
                         "Your account has been credited with %.2f %s",
                         request.getAmount(), request.getCurrency()
                 );
-                log.debug("Deposit successful. New balance: {}", newBalance);
+                log.info("Deposit successful. New balance: {}", newBalance);
 
             } else if ("WITHDRAW".equals(request.getOperation())) {
                 newBalance = accountsClient.withdraw(
@@ -64,7 +64,7 @@ public class CashService {
                         "%.2f %s has been withdrawn from your account",
                         request.getAmount(), request.getCurrency()
                 );
-                log.debug("Withdraw successful. New balance: {}", newBalance);
+                log.info("Withdraw successful. New balance: {}", newBalance);
 
             } else {
                 return new CashOperationResponse(

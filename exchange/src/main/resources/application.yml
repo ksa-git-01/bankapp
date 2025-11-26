@@ -18,7 +18,7 @@ spring:
         jwt:
           issuer-uri: http://bankapp-keycloak:8080/realms/bankapp
   kafka:
-    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
     consumer:
       group-id: exchange-service
       auto-offset-reset: earliest
@@ -33,15 +33,29 @@ spring:
 kafka:
   topics:
     exchange: exchange-rates
+  bootstrap:
+    servers: ${KAFKA_BOOTSTRAP_SERVERS}
 
 management:
   endpoints:
     web:
       exposure:
-        include: health,info
+        include: health,info,prometheus,metrics
   endpoint:
+    info:
+      enabled: true
+    prometheus:
+      enabled: true
+    metrics:
+      enabled: true
     health:
       show-details: always
+  zipkin:
+    tracing:
+      endpoint: http://bankapp-zipkin:9411/api/v2/spans
+  tracing:
+    sampling:
+      probability: 1.0
 
 server:
   port: 8080
@@ -50,12 +64,4 @@ jwt:
   expiration: 3600000
 
 logging:
-  level:
-    root: INFO
-    ru.yandex.practicum.exchange: DEBUG
-    ru.yandex.practicum.exchange.configuration: DEBUG
-    org.springframework.security: DEBUG
-    org.springframework.security.oauth2: DEBUG
-    org.springframework.security.oauth2.server.resource: TRACE
-    org.springframework.security.oauth2.jwt: TRACE
-    org.springframework.web.client: DEBUG
+  config: classpath:log4j2.xml

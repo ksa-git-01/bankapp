@@ -16,6 +16,12 @@ Keycloak
 Minikube
 kubectl
 Helm
+Zipkin
+Prometheus
+Grafana
+Logstash
+Elasticsearch
+Kibana
 ```
 
 ### Требования к окружению
@@ -70,25 +76,43 @@ docker build -t generator:latest -f generator/Dockerfile .
 docker build -t notifications:latest -f notifications/Dockerfile .
 docker build -t transfer:latest -f transfer/Dockerfile .
 ```
+- Если в Helm еще не добавлены репозитории их нужно добавить командами:
+```
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm repo add openzipkin https://openzipkin.github.io/zipkin
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo add grafana https://grafana.github.io/helm-charts
+helm repo update
+```
+
 - Перейти в каталог с зонтичным хелмчартом и установить его в кластер
 ```
 cd helm/umbrella-chart
 
 helm install bankapp . -n test --set accounts.keycloak.client.secretValue=ACCOUNTS-client-secret-123456 --set cash.keycloak.client.secretValue=CASH-client-secret-123456 --set frontui.keycloak.client.secretValue=FRONTUI-client-secret-123456 --set generator.keycloak.client.secretValue=GENERATOR-client-secret-123456 --set transfer.keycloak.client.secretValue=TRANSFER-client-secret-123456
 # или
-helm install bankapp . -n prod
+helm install bankapp . -n prod --set accounts.keycloak.client.secretValue=ACCOUNTS-client-secret-123456 --set cash.keycloak.client.secretValue=CASH-client-secret-123456 --set frontui.keycloak.client.secretValue=FRONTUI-client-secret-123456 --set generator.keycloak.client.secretValue=GENERATOR-client-secret-123456 --set transfer.keycloak.client.secretValue=TRANSFER-client-secret-123456
 
 # или обновить, если чарт уже устанавливался ранее 
 helm upgrade bankapp . -n test
 helm upgrade bankapp . -n prod
 ```
-Для работы с приложением нужно дождаться полного запуска всех подов, это может занять пару минут
+Для работы с приложением нужно дождаться полного запуска всех подов, это может занять до 20 минут
 
 - После первого запуска, дождаться пока запустится pod с кафкой и создать топики
 ``` 
 kubectl exec -it kafka-0 -n test -- /opt/kafka/bin/kafka-topics.sh --create --topic notifications-events --bootstrap-server localhost:9092 --partitions 1 --replication-factor 1
 kubectl exec -it kafka-0 -n test -- /opt/kafka/bin/kafka-topics.sh --create --topic exchange-rates --bootstrap-server localhost:9092 --partitions 1 --replication-factor 1
+kubectl exec -it kafka-0 -n test -- /opt/kafka/bin/kafka-topics.sh --create --topic bankapp-logs --bootstrap-server localhost:9092 --partitions 1 --replication-factor 1
 ```
+
+- Из корня проекта выполнить
+```
+cd prometheus
+kubectl apply -f servicemonitor-frontui.yaml -n test
+kubectl apply -f servicemonitor-backend.yaml -n test
+``` 
+
 - Если нужен доступ к приложению через браузер хоста, то создать тоннель в отдельном терминале.
 Окно не закрывать
 ```
@@ -106,7 +130,26 @@ minikube dashboard --url
 ```
 kubectl port-forward -n test service/bankapp-keycloak 18080:8080
 ```
-
+- Если хотим перейти в веб-интерфейс Zipkin, необходимо в отдельном окне терминала выполнить команду (Окно не закрывать)
+```
+minikube service bankapp=zipkin --url -n test
+# в терминале будет выведен временный url веб-интерфейса Zipkin 
+```
+- Если хотим перейти в веб-интерфейс Grafana, необходимо в отдельном окне терминала выполнить команду (Окно не закрывать)
+```
+kubectl port-forward -n test svc/bankapp-grafana 18090:3000
+# Grafana станет доступна по url: http://localhost:18090
+```
+- Если хотим перейти в веб-интерфейс Prometheus, необходимо в отдельном окне терминала выполнить команду (Окно не закрывать)
+```
+kubectl port-forward -n test svc/bankapp-kube-prometheus-st-prometheus 9090:9090
+# Prometheus станет доступна по url: http://localhost:9090
+```
+- Если хотим перейти в веб-интерфейс Kibana, необходимо в отдельном окне терминала выполнить команду (Окно не закрывать)
+```
+kubectl port-forward -n test service/kibana 5601:5601
+# Kibana станет доступна по url: http://localhost:5601
+```
 
 
 Используются порты ОС хоста:
@@ -115,6 +158,17 @@ kubectl port-forward -n test service/bankapp-keycloak 18080:8080
 - 15432 - PostgreSQL Accounts
 - 18080 - Веб-интерфейс keycloak
 - 8500 - Consul 
+
+### Настройка дашбордов Grafana
+```
+1. Зайти в веб-интерфейс Grafana, логин/пароль: admin/admin123
+2. Добавить новый DataSource: тип Prometheus, адрес http://bankapp-kube-prometheus-st-prometheus:9090
+Остальные настройки по умолчанию
+3. Импортировать готовые дашборды:
+Dashboards → New → Import
+4701 - JVM
+11378 - Spring Boot Statistics
+```
 
 ### Ресурсы проекта
 

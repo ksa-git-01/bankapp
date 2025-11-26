@@ -23,7 +23,7 @@ public class AccountService {
     private final AccountRepository accountRepository;
 
     public List<AccountDto> getUserAccounts(Long userId) {
-        log.debug("Getting accounts for user: {}", userId);
+        log.info("Getting accounts for user: {}", userId);
 
         return accountRepository.findByUserId(userId).stream()
                 .map(account -> new AccountDto(
@@ -36,7 +36,7 @@ public class AccountService {
 
     @Transactional
     public AccountDto createAccount(CreateAccountRequest request) {
-        log.debug("Creating account for user {} with currency {}",
+        log.info("Creating account for user {} with currency {}",
                 request.getUserId(), request.getCurrency());
 
         // Проверяем, нет ли уже счета в этой валюте
@@ -56,14 +56,14 @@ public class AccountService {
 
         Account saved = accountRepository.save(account);
 
-        log.debug("Account created: id={}", saved.getId());
+        log.info("Account created: id={}", saved.getId());
 
         return new AccountDto(saved.getId(), saved.getCurrency(), saved.getBalance());
     }
 
     @Transactional
     public BigDecimal deposit(Long userId, String currency, BigDecimal amount) {
-        log.debug("Deposit: user={}, currency={}, amount={}", userId, currency, amount);
+        log.info("Deposit: user={}, currency={}, amount={}", userId, currency, amount);
 
         if (amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Сумма должна быть положительной");
@@ -79,14 +79,14 @@ public class AccountService {
 
         Account updated = accountRepository.save(account);
 
-        log.debug("Deposit completed. New balance: {}", updated.getBalance());
+        log.info("Deposit completed. New balance: {}", updated.getBalance());
 
         return updated.getBalance();
     }
 
     @Transactional
     public BigDecimal withdraw(Long userId, String currency, BigDecimal amount) {
-        log.debug("Withdraw: user={}, currency={}, amount={}", userId, currency, amount);
+        log.info("Withdraw: user={}, currency={}, amount={}", userId, currency, amount);
 
         if (amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Сумма должна быть положительной");
@@ -106,14 +106,14 @@ public class AccountService {
 
         Account updated = accountRepository.save(account);
 
-        log.debug("Withdraw completed. New balance: {}", updated.getBalance());
+        log.info("Withdraw completed. New balance: {}", updated.getBalance());
 
         return updated.getBalance();
     }
 
     @Transactional
     public void deleteAccount(Long userId, String currency) {
-        log.debug("Deleting account: user={}, currency={}", userId, currency);
+        log.info("Deleting account: user={}, currency={}", userId, currency);
 
         Account account = accountRepository.findByUserIdAndCurrency(userId, currency)
                 .orElseThrow(() -> new IllegalArgumentException(
@@ -128,6 +128,6 @@ public class AccountService {
 
         accountRepository.delete(account);
 
-        log.debug("Account deleted");
+        log.info("Account deleted");
     }
 }

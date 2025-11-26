@@ -25,12 +25,12 @@ public class RateConsumer {
             @Header(KafkaHeaders.RECEIVED_PARTITION) int partition,
             @Header(KafkaHeaders.OFFSET) long offset
     ) {
-        log.debug("Received rate from partition {} offset {}: CurrencyFrom={}, CurrencyTo={}, Ratio={}",
+        log.info("Received rate from partition {} offset {}: CurrencyFrom={}, CurrencyTo={}, Ratio={}",
                 partition, offset, rate.getCurrencyFrom(), rate.getCurrencyTo(), rate.getRatio());
 
         try {
             rateService.createRate(rate);
-            log.debug("Successfully rate");
+            log.info("Successfully rate");
         } catch (Exception e) {
             log.error("Failed to process rate", e);
             throw e;

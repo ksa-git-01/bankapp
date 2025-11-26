@@ -25,7 +25,7 @@ public class BlockerController {
             @RequestBody OperationCheckRequest operationCheckRequest,
             HttpServletRequest httpRequest) {
 
-        log.debug("Received operation check request from userId: {}", operationCheckRequest.getUserId());
+        log.info("Received operation check request from userId: {}", operationCheckRequest.getUserId());
         
         Long authenticatedUserId = (Long) httpRequest.getAttribute("userId");
 

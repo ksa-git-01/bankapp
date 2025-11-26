@@ -19,25 +19,26 @@ import org.springframework.web.client.RestTemplate;
 @Slf4j
 public class OAuth2RestTemplateConfig {
 
+    private final RestTemplateBuilder restTemplateBuilder;
+
+    public OAuth2RestTemplateConfig(
+            RestTemplateBuilder restTemplateBuilder) {
+        this.restTemplateBuilder = restTemplateBuilder;
+    }
+
     @Bean
     @Primary
     public RestTemplate restTemplate(
             OAuth2AuthorizedClientManager authorizedClientManager) {
-
-        RestTemplate restTemplate = new RestTemplateBuilder()
+        return restTemplateBuilder
+                .additionalInterceptors(dualTokenInterceptor(authorizedClientManager))
                 .build();
-
-        restTemplate.getInterceptors().add(
-                dualTokenInterceptor(authorizedClientManager)
-        );
-
-        return restTemplate;
     }
 
     @Bean
     @Qualifier("simpleRestTemplate")
     public RestTemplate simpleRestTemplate() {
-        return new RestTemplate();
+        return restTemplateBuilder.build();
     }
 
     private ClientHttpRequestInterceptor dualTokenInterceptor(

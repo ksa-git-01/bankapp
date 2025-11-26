@@ -1,0 +1,19 @@
+replicaCount: 1
+
+image:
+  repository: kibana
+  tag: "8.11.0"
+  pullPolicy: IfNotPresent
+
+resources:
+  requests:
+    memory: "1Gi"
+    cpu: "250m"
+  limits:
+    memory: "1Gi"
+    cpu: "500m"
+
+service:
+  type: ClusterIP
+  port: 5601
+

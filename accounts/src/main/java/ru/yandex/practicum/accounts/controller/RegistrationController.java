@@ -21,7 +21,7 @@ public class RegistrationController {
 
     @PostMapping("/api/registration")
     public ResponseEntity<RegistrationResponse> register(@RequestBody RegistrationRequest request) {
-        log.debug("Registration request received for user: {}", request.getLogin());
+        log.info("Registration request received for user: {}", request.getLogin());
 
         try {
             RegistrationResponse response = registrationService.registerUser(request);

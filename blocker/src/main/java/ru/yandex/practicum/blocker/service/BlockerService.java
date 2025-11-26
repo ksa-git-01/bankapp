@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 public class BlockerService {
 
     public OperationCheckResponse checkOperation(OperationCheckRequest request) {
-        log.debug("Checking operation: user={}, operation={}, amount={}, currency={}",
+        log.info("Checking operation: user={}, operation={}, amount={}, currency={}",
                 request.getUserId(), request.getOperation(), request.getAmount(), request.getCurrency());
 
         // Блокируем операции больше 100000
@@ -24,7 +24,7 @@ public class BlockerService {
             );
         }
 
-        log.debug("Operation approved");
+        log.info("Operation approved");
         return new OperationCheckResponse(false, null);
     }
 }

@@ -52,7 +52,7 @@ public class UserController {
             @RequestBody UpdatePasswordRequest request,
             HttpServletRequest httpRequest) {
 
-        log.debug("Password update request for user: {}", userId);
+        log.info("Password update request for user: {}", userId);
 
         Long authenticatedUserId = (Long) httpRequest.getAttribute("userId");
 
@@ -73,7 +73,7 @@ public class UserController {
             @RequestBody UpdateUserInfoRequest request,
             HttpServletRequest httpRequest) {
 
-        log.debug("User info update request for user: {}", userId);
+        log.info("User info update request for user: {}", userId);
 
         Long authenticatedUserId = (Long) httpRequest.getAttribute("userId");
 
@@ -87,7 +87,7 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<List<UserListResponse>> getAllUsers() {
-        log.debug("Getting all users list");
+        log.info("Getting all users list");
 
         List<UserListResponse> users = userService.getAllUsers();
         return ResponseEntity.ok(users);

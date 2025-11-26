@@ -36,7 +36,7 @@ public class TransferController {
             );
         }
 
-        log.debug("Transfer request: from={}, to={}, amount={} {}",
+        log.info("Transfer request: from={}, to={}, amount={} {}",
                 request.fromUserId(), request.toUserId(),
                 request.amount(), request.fromCurrency());
 

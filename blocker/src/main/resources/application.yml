@@ -6,15 +6,29 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: http://bankapp-keycloak:8080/realms/bankapp
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
 
 management:
   endpoints:
     web:
       exposure:
-        include: health,info
+        include: health,info,prometheus,metrics
   endpoint:
+    info:
+      enabled: true
+    prometheus:
+      enabled: true
+    metrics:
+      enabled: true
     health:
       show-details: always
+  zipkin:
+    tracing:
+      endpoint: http://bankapp-zipkin:9411/api/v2/spans
+  tracing:
+    sampling:
+      probability: 1.0
 
 rsa:
   public-key: classpath:certs/public.pem
@@ -22,9 +36,9 @@ rsa:
 server:
   port: 8080
 
+kafka:
+  bootstrap:
+    servers: ${KAFKA_BOOTSTRAP_SERVERS}
+
 logging:
-  level:
-    root: INFO
-    ru.yandex.practicum.blocker: INFO
-    org.springframework.security: DEBUG
-    org.springframework.security.oauth2: DEBUG
+  config: classpath:log4j2.xml

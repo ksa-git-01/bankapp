@@ -27,7 +27,7 @@ public class RegistrationService {
 
     @Transactional
     public RegistrationResponse registerUser(RegistrationRequest request) {
-        log.debug("Registering new user: {}", request.getLogin());
+        log.info("Registering new user: {}", request.getLogin());
 
         List<String> errors = validateRegistration(request);
         if (!errors.isEmpty()) {
@@ -50,7 +50,7 @@ public class RegistrationService {
 
         User savedUser = userRepository.save(user);
 
-        log.debug("User registered successfully: {}", savedUser.getUsername());
+        log.info("User registered successfully: {}", savedUser.getUsername());
 
         return new RegistrationResponse(
                 savedUser.getId(),

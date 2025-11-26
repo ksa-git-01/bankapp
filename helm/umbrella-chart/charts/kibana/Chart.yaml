@@ -1,0 +1,5 @@
+apiVersion: v2
+name: kibana
+description: Kibana
+version: 0.1.0
+appVersion: "8.11.0"

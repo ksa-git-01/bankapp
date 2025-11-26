@@ -18,9 +18,9 @@ public class AuthService {
 
     public AuthResponse authenticate(String username, String password) {
         AuthRequest request = new AuthRequest(username, password);
-        log.debug("AuthRequest: {}", request);
+        log.info("AuthRequest: {}", request);
         AuthResponse response = restTemplate.postForObject(ACCOUNTS_URL + "/api/auth", request, AuthResponse.class);
-        log.debug("AuthResponse: {}", response);
+        log.info("AuthResponse: {}", response);
         return response;
     }
 
