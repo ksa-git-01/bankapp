@@ -1,0 +1,35 @@
+nameOverride: "elasticsearch"
+fullnameOverride: ""
+
+replicaCount: 1
+
+image:
+  repository: docker.elastic.co/elasticsearch/elasticsearch
+  tag: "8.11.0"
+  pullPolicy: IfNotPresent
+
+resources:
+  requests:
+    memory: "512Mi"
+    cpu: "250m"
+  limits:
+    memory: "1Gi"
+    cpu: "500m"
+
+persistence:
+  enabled: false
+  size: 1Gi
+  storageClass: ""
+
+service:
+  type: ClusterIP
+  port: 9200
+  transportPort: 9300
+
+env:
+  discoveryType: "single-node"
+  networkHost: "0.0.0.0"
+  ES_JAVA_OPTS: "-Xms256m -Xmx256m"
+
+security:
+  enabled: false

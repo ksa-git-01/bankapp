@@ -70,3 +70,9 @@ kube-prometheus-stack:
   prometheusOperator:
     enabled: true
     namespace: test
+
+logstash:
+  elastic:
+    server: "bankapp-elasticsearch:9200"
+  kafka:
+    server: "kafka:9092"

@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "logstash.fullname" . }}
+  labels:
+    app: {{ include "logstash.name" . }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "logstash.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "logstash.name" . }}
+    spec:
+      containers:
+        - name: logstash
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.service.port }}
+          env:
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              value: {{ .Values.kafka.server | quote }}
+            - name: ELASTICSEARCH_HOSTS
+              value: {{ .Values.elastic.server | quote }}
+          volumeMounts:
+            - name: pipeline
+              mountPath: {{ .Values.pipelinePath }}
+          resources:
+            requests:
+              memory: {{ .Values.resources.requests.memory }}
+              cpu: {{ .Values.resources.requests.cpu }}
+            limits:
+              memory: {{ .Values.resources.limits.memory }}
+              cpu: {{ .Values.resources.limits.cpu }}
+      volumes:
+        - name: pipeline
+          configMap:
+            name: {{ include "logstash.fullname" . }}-pipeline
