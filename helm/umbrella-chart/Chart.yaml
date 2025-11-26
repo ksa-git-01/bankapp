@@ -58,3 +58,6 @@ dependencies:
   - name: logstash
     version: 0.1.0
     repository: "file://./charts/logstash"
+  - name: kibana
+    version: 0.1.0
+    repository: "file://./charts/kibana"

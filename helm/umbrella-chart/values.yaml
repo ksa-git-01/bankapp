@@ -76,3 +76,7 @@ logstash:
     server: "bankapp-elasticsearch:9200"
   kafka:
     server: "kafka:9092"
+
+kibana:
+  elastic:
+    server: "bankapp-elasticsearch:9200"
